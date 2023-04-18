@@ -9,8 +9,15 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 
 from pathlib import Path
+from environs import Env
+
+from django.core.management.utils import get_random_secret_key
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +27,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-%vm#_ywv7!*59cw9i$zf+!a-1n1c7_pq^m0my6!xx453)i1_!-"
+SECRET_KEY = env.str('SECRET_KEY', default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
 
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
 
 # Application definition
 
@@ -37,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "storage_rental",
 ]
 
 MIDDLEWARE = [
@@ -51,10 +62,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "selfstorage.urls"
 
+STATICFILES_DIRS = env.list(
+    'STATICFILES_DIRS',
+    default=[Path(BASE_DIR, 'static')],
+)
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': env.list(
+            'TEMPLATES_DIRS',
+            default=[Path(BASE_DIR, 'templates')],
+        ),
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -103,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-RU"
 
 TIME_ZONE = "UTC"
 
@@ -115,9 +134,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_ROOT = env.str('STATIC_ROOT', default='staticfiles')
+
+STATIC_URL = env.str('STATIC_URL', default='/static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+MEDIA_ROOT = env.path('MEDIA_ROOT', default=Path(BASE_DIR, 'media'))
+
+MEDIA_URL = env.str('MEDIA_URL', default='/media/')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
