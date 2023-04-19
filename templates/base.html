@@ -22,8 +22,6 @@
 		</a>
 		<div class="collapse navbar-collapse justify-content-end" id="navbar">
 			<ul class="navbar-nav">
-
-
 {% block phonenumber_left %}
 				<li class="nav-item d-flex align-items-center me-5">
 					<div class="d-flex justify-content-center align-items-center rounded-pill SelfStorage__bg_green me-2" style="height: 36px; width: 36px;">
@@ -133,26 +131,21 @@
 		</div>
 	</div>
 </aside>
-<aside class="modal fade" id="AgreementModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
-		<div class="modal-content">
-			<div class="modal-header border-0">
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body d-flex justify-content-center align-items-center">
-				<form class="d-flex flex-column align-items-center" style="max-width: 420px">
-					<span class="fw-light SelfStorage_grey">Согласие на обработку персональных данных.</span>
-					<span class="fw-light SelfStorage_grey">Я, [ФИО], даю свое согласие на обработку моих персональных данных в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных", а именно: сбор, систематизацию, накопление, хранение, уточнение (обновление, изменение), использование, распространение (в том числе передачу третьим лицам, если это необходимо для оказания услуг), обезличивание, блокирование, уничтожение.</span>
-					<span class="fw-light SelfStorage_grey">Персональные данные будут обрабатываться в целях [указать цели обработки данных], в том числе для [указать дополнительные цели обработки данных, если это необходимо].</span>
-					<span class="fw-light SelfStorage_grey">Я даю свое согласие на обработку следующих моих персональных данных: [указать перечень персональных данных, которые будут обрабатываться].</span>
-					<span class="fw-light SelfStorage_grey">Я подтверждаю, что ознакомлен(а) с условиями обработки моих персональных данных, а также с моими правами в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных".</span>
-					<span class="fw-light SelfStorage_grey">Настоящее согласие действует до момента моего отзыва его в письменной форме.</span>
-					<button type="button" class="btn border-8 py-3 px-5 mt-5 mb-3 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange" data-bs-dismiss="modal">Подтверждаю</button>
-				</form>
-			</div>
+<main class="container mt-header">
+{% block article %}
+	<article class="row">
+		<div class="col-12 col-lg-6 mb-3 mb-lg-0">
+			<h1 class="fw-bold SelfStorage_green mb-5">Доставка и бережное хранение ваших вещей</h1>
+			<h4 class="fw-lighter SelfStorage_grey mb-5">Аренда бокса на любой срок Бесплатная доставка от вашего дома </h4>
+			<form class="">
+				<input type="text" required name="EMAIL1" class="form-control border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey" placeholder="Укажите ваш e-mail">
+				<button class="btn border-8 py-3 px-5 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">Рассчитать стоимость</button>
+				<span class="text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="link-dark" data-bs-toggle="modal" data-bs-target="#AgreementModal">согласие на обработку персональных данных</a></span>
+			</form>
 		</div>
-	</div>
-</aside>
+		<div class="col-12 col-lg-6 SelfStorage__img"></div>
+	</article>
+{% endblock %}
 {% block content %}
 {% endblock %}
 {% block bid %}
@@ -169,7 +162,7 @@
 					<button class="btn w-100 border-8 py-3 px-5 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">Рассчитать стоимость</button>
 				</div>
 			</form>
-			<span class="text-white text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="text-white">согласие на обработку персональных данных</a></span>
+			<span class="text-white text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#AgreementModal">согласие на обработку персональных данных</a></span>
 		</div>
 	</div>
 </aside>
@@ -188,7 +181,7 @@
 					<button class="btn w-100 border-8 py-3 px-5 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">Рассчитать стоимость</button>
 				</div>
 			</form>
-			<span class="text-white text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="text-white">согласие на обработку персональных данных</a></span>
+			<span class="text-white text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#AgreementModal">согласие на обработку персональных данных</a></span>
 		</div>
 	</div>
 </aside>
@@ -233,10 +226,49 @@
 		<div class="col-6 col-md-4 d-flex flex-column">
 			<p><a href="{% url 'privacy_policy' %}" class="link-dark text-decoration-none">Политика конфиденциальности</a></p>
 			<p><a href="{% url 'documents' %}" class="link-dark text-decoration-none">Правовые документы</a></p>
-			<p><a href="{% url 'contacts' %}" class="link-dark text-decoration-none">Контакты</a></p>
+			<p><a href="{% url 'contacts' %}" class="link-dark text-decoration-none" data-bs-toggle="modal" data-bs-target="#ContactsModal">Контакты</a></p>
 		</div>
 		<h6 class="SelfStorage_grey text-center mt-5">© 2022 SelfStorage. Использование материалов запрещено без письменного согласия</h6>
 	</div>
+	<aside class="modal fade" id="ContactsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+			<div class="modal-content">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body d-flex justify-content-center align-items-center">
+					<form class="d-flex flex-column align-items-center" style="max-width: 420px">
+						<h1 class="modal-title text-center fw-bold mb-3">Контакты</h1>
+						<span class="fw-light SelfStorage_grey"></span>
+						<span class="fw-light SelfStorage_grey"></span>
+						<span class="fw-light SelfStorage_grey"></span>
+						<span class="fw-light SelfStorage_grey"></span>
+						<button type="button" class="btn border-8 py-3 px-5 mt-5 mb-3 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange" data-bs-dismiss="modal">Назад</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</aside>
+	<aside class="modal fade" id="AgreementModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+			<div class="modal-content">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body d-flex justify-content-center align-items-center">
+					<form class="d-flex flex-column align-items-center" style="max-width: 420px">
+						<span class="fw-light SelfStorage_grey">Согласие на обработку персональных данных.</span>
+						<span class="fw-light SelfStorage_grey">Я, [ФИО], даю свое согласие на обработку моих персональных данных в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных", а именно: сбор, систематизацию, накопление, хранение, уточнение (обновление, изменение), использование, распространение (в том числе передачу третьим лицам, если это необходимо для оказания услуг), обезличивание, блокирование, уничтожение.</span>
+						<span class="fw-light SelfStorage_grey">Персональные данные будут обрабатываться в целях [указать цели обработки данных], в том числе для [указать дополнительные цели обработки данных, если это необходимо].</span>
+						<span class="fw-light SelfStorage_grey">Я даю свое согласие на обработку следующих моих персональных данных: [указать перечень персональных данных, которые будут обрабатываться].</span>
+						<span class="fw-light SelfStorage_grey">Я подтверждаю, что ознакомлен(а) с условиями обработки моих персональных данных, а также с моими правами в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных".</span>
+						<span class="fw-light SelfStorage_grey">Настоящее согласие действует до момента моего отзыва его в письменной форме.</span>
+						<button type="button" class="btn border-8 py-3 px-5 mt-5 mb-3 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange" data-bs-dismiss="modal">Подтверждаю</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</aside>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
