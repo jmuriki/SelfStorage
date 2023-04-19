@@ -89,7 +89,7 @@
 					<input type="email" required name="EMAIL_CREATE" class="form-control border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey" placeholder="E-mail">
 					<input type="text" required name="PASSWORD_CREATE" class="form-control border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey" placeholder="Пароль">
 					<input type="text" required name="PASSWORD_CONFIRM" class="form-control border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey" placeholder="Подтверждение пароля">
-					<span class="fw-light SelfStorage_grey">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="SelfStorage_grey">согласие на обработку персональных данных</a></span>
+					<span class="fw-light SelfStorage_grey">Нажимая на кнопку, вы подтверждаете свое <a href="#" class="SelfStorage_grey" data-bs-toggle="modal" data-bs-target="#AgreementModal">согласие на обработку персональных данных</a></span>
 					<button class="btn border-8 py-3 px-5 mt-5 mb-3 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">Зарегистрироваться</button>
 					<span>Уже зарегистрированы? <a href="#" class="SelfStorage_orange" data-bs-toggle="modal" data-bs-target="#SignModal" data-bs-dismiss="modal" aria-label="Close">Войти в личный кабинет</a></span>
 				</form>
@@ -133,8 +133,29 @@
 		</div>
 	</div>
 </aside>
+<aside class="modal fade" id="AgreementModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body d-flex justify-content-center align-items-center">
+				<form class="d-flex flex-column align-items-center" style="max-width: 420px">
+					<span class="fw-light SelfStorage_grey">Согласие на обработку персональных данных.</span>
+					<span class="fw-light SelfStorage_grey">Я, [ФИО], даю свое согласие на обработку моих персональных данных в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных", а именно: сбор, систематизацию, накопление, хранение, уточнение (обновление, изменение), использование, распространение (в том числе передачу третьим лицам, если это необходимо для оказания услуг), обезличивание, блокирование, уничтожение.</span>
+					<span class="fw-light SelfStorage_grey">Персональные данные будут обрабатываться в целях [указать цели обработки данных], в том числе для [указать дополнительные цели обработки данных, если это необходимо].</span>
+					<span class="fw-light SelfStorage_grey">Я даю свое согласие на обработку следующих моих персональных данных: [указать перечень персональных данных, которые будут обрабатываться].</span>
+					<span class="fw-light SelfStorage_grey">Я подтверждаю, что ознакомлен(а) с условиями обработки моих персональных данных, а также с моими правами в соответствии с Федеральным законом от 27.07.2006 г. №152-ФЗ "О персональных данных".</span>
+					<span class="fw-light SelfStorage_grey">Настоящее согласие действует до момента моего отзыва его в письменной форме.</span>
+					<button type="button" class="btn border-8 py-3 px-5 mt-5 mb-3 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange" data-bs-dismiss="modal">Подтверждаю</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</aside>
 {% block content %}
 {% endblock %}
+{% block bid %}
 <aside class="py-5 mt-header SelfStorage__bg_green">
 	<div class="container py-5Арендовать бокс">
 		<div class="d-flex flex-column align-items-center">
@@ -152,6 +173,8 @@
 		</div>
 	</div>
 </aside>
+{% endblock %}
+{% block promo %}
 <aside class="py-5 mt-header SelfStorage__bg_green">
 	<div class="container py-5Арендовать бокс">
 		<div class="d-flex flex-column align-items-center">
@@ -169,6 +192,7 @@
 		</div>
 	</div>
 </aside>
+{% endblock %}
 <footer class="container py-5">
 	<div class="row mb-5">
 		<div class="col-6 col-md-4 d-flex flex-column mb-3">
