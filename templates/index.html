@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
 {% load static %}
+
 	{% block title %}
 	<title>SelfStorage</title>
 	{% endblock %}
+
 {% block content %}
 	<article class="text-center row pt-header">
 		<h1 class=" fw-bold SelfStorage_green mb-5">Чем мы можем помочь?</h1>
@@ -45,7 +47,7 @@
 				</div>
 
 				<h4 class="text-white mt-5 mb-3">Бокс от 190 р. за м²</h4>
-				<button class="btn fs_24 SelfStorage_green bg-white SelfStorage__btn_green border-8 w-50 py-3">Подробнее</button>
+				<button class="btn fs_24 SelfStorage_green bg-white SelfStorage__btn_green border-8 w-50 py-3" onclick="location.href='{% url 'rent_box' %}'">Подробнее</button>
 			</div>
 		</div>
 		<div class="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-start">
@@ -59,7 +61,7 @@
 					<span class="text-white">Другие идеи хранения</span>
 				</div>
 				<h4 class="text-white mt-5 mb-3">Бокс от 210 р. за м²</h4>
-				<button class="btn fs_24 SelfStorage_orange bg-white SelfStorage__btn_orange border-8 w-50 py-3">Подробнее</button>
+				<button class="btn fs_24 SelfStorage_orange bg-white SelfStorage__btn_orange border-8 w-50 py-3" onclick="location.href='{% url 'rent_box' %}'">Подробнее</button>
 			</div>
 		</div>
 	</article>
@@ -125,70 +127,18 @@
 				</div>
 				<a href="#" class="text-center text-lg-start mt-4 mb-5 SelfStorage_green">Подробнее о складе</a>
 				<div class="d-flex flex-column align-items-center align-items-lg-start">
-					<button class="btn w-75 fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">Арендовать бокс</button>
-					<button class="btn w-75 fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange">Выбрать склад</button>
+					<button class="btn w-75 fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3" onclick="location.href='{% url 'rent_box' %}'">Арендовать бокс</button>
+					<button class="btn w-75 fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange" onclick="location.href='{% url 'rent_box' %}'">Выбрать склад</button>
 				</div>
 			</div>
 		</div>
 	</article>
-
-	<article class="row pt-header">
-		<h1 class="text-center fw-bold SelfStorage_green mb-4">Забота о ваших ценностях – наша главная задача</h1>
-		<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-			<div class="carousel-inner border">
-				<div class="carousel-item active">
-					<div class="row p-5">
-						<div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-							<div>
-								<h4 class="fw-bold">«Теперь могу хранить вещи по-умному!»</h4>
-								<p class="fs_24">Быстро собрали вещи и бесплатно доставили до ближайшего склада.</p>
-								<p class="fs_24">Удобная система напоминания о том, что срок хранения подходит к концу.</p>
-								<p class="fs_24">Вещи были в целостности, ничего не повредилось.</p>
-								<a href="#" class="SelfStorage_green">Читать отзыв полностью</a>
-							</div>
-						</div>
-						<div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-							<img src="{% static 'img/img1.png' %}" width="290" height="290" class="rounded-pill mb-3" alt="">
-							<span class="fw-bold">Катерина Петрова</span>
-							<span>Одинцово</span>
-						</div>
-					</div>
-				</div>
-				<div class="carousel-item">
-					<div class="row p-5">
-						<div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-							<div>
-								<h4 class="fw-bold">«Больше не мучаюсь: выкидывать вещи или нет»</h4>
-								<p class="fs_24">Очень тяжело было прощаться с вещами, которые были у меня с самого детства.
-									На новую квартиру все никак не могло уместиться, начал ломать голову, что же делать.
-									Решил попробовать арендовать бокс на полгода, такой опыт был впервые.</p>
-								<a href="#" class="SelfStorage_green">Читать отзыв полностью</a>
-							</div>
-						</div>
-						<div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-							<img src="{% static 'img/img2.png' %}" width="290" height="290"  class="rounded-pill mb-3" alt="">
-							<span class="fw-bold">Николай Овсянников</span>
-							<span>Люберцы</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="w-100 d-flex justify-content-center mt-5">
-				<button data-bs-target="#carouselExampleControls" data-bs-slide="prev" class="btn rounded-pill d-flex justify-content-center align-items-center SelfStorage__bg_green" style="width: 66px; height: 66px;">
-					<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#fff" class="bi bi-chevron-left" viewBox="0 0 16 16">
-						<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-					</svg>
-				</button>
-				<div style="width: 1rem"></div>
-				<button data-bs-target="#carouselExampleControls" data-bs-slide="next" class="btn rounded-pill d-flex justify-content-center align-items-center SelfStorage__bg_green" style="width: 66px; height: 66px;">
-					<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#fff" class="bi bi-chevron-right" viewBox="0 0 16 16">
-						<path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-					</svg>
-				</button>
-			</div>
-		</div>
-	</article>
-</main>
+{% endblock %}
+{% block locations %}
+{% endblock %}
+{% block boxes %}
+{% endblock %}
+{% block tariffs %}
 {% endblock %}
 {% block bid %}
 {% endblock %}
