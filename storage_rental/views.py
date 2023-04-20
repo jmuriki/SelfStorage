@@ -1,57 +1,87 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 
 
 def index(request):
-	return render(request, 'index.html')
+	# is_authenticated = request.user.is_authenticated
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'index.html', context)
 
 
 def tariffs(request):
-	return render(request, 'tariffs.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'tariffs.html', context)
 
 
 def calculator(request):
-	return render(request, 'calculator.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'calculator.html', context)
 
 
 def rent_box(request):
-	return render(request, 'boxes.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'boxes.html', context)
 
 
 def can_be_stored(request):
-	return render(request, 'faq.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'faq.html', context)
 
 
 def locations(request):
-	return render(request, 'locations.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'locations.html', context)
 
 
 def contacts(request):
-	return render(request, 'contacts.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'contacts.html', context)
 
 
 def customers_reviews(request):
-	return render(request, 'customers_reviews.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'customers_reviews.html', context)
 
 
 def privacy_policy(request):
-	return render(request, 'privacy_policy.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'privacy_policy.html', context)
 
 
 def documents(request):
-	return render(request, 'documents.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'documents.html', context)
+
+
+def account(request):
+	is_authenticated = True
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'account.html', context)
 
 
 def sign_up(request):
-	return render(request, 'sign_up.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'sign_up.html', context)
 
 
 def sign_in(request):
-	return render(request, 'sign_in.html')
+    is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+    return render(request, 'sign_in.html', context)
 
 
 def restore(request):
-	return render(request, 'restore.html')
-
-
-# def #(request):
-# 	return render(request, '#.html')
+	is_authenticated = False
+	context = {'is_authenticated': is_authenticated}
+	return render(request, 'restore.html', context)
