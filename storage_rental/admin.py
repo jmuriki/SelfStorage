@@ -3,4 +3,5 @@ from .models import *
 
 admin.site.register(Cell)
 admin.site.register(Storage)
-admin.site.register(BookingRequest)
+admin.site.register(Order)
+admin.site.register(Alert)
