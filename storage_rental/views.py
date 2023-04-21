@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib import auth
 
 
 def index(request):
@@ -24,10 +26,10 @@ def calculator(request):
 def rent_box(request):
 	is_authenticated = False
 	context = {'is_authenticated': is_authenticated}
-	return render(request, 'boxes.html', context)
+	return render(request, 'rent_box.html', context)
 
 
-def can_be_stored(request):
+def faq(request):
 	is_authenticated = False
 	context = {'is_authenticated': is_authenticated}
 	return render(request, 'faq.html', context)
@@ -66,19 +68,54 @@ def documents(request):
 def account(request):
 	is_authenticated = True
 	context = {'is_authenticated': is_authenticated}
-	return render(request, 'account.html', context)
+
+	if is_authenticated:
+		return render(request, 'account.html', context)
+	return redirect(request, 'main_page', context)
 
 
 def sign_up(request):
 	is_authenticated = False
 	context = {'is_authenticated': is_authenticated}
-	return render(request, 'sign_up.html', context)
+
+	if request.method == 'POST':
+		username = request.POST['EMAIL_CREATE']
+		password = request.POST['PASSWORD_CREATE']
+		confirm_password = request.POST['PASSWORD_CONFIRM']
+
+		if User.objects.filter(username=username).exists():
+			context['error'] = 'Такой пользователь уже зарегистрирован. Если вы не помните свой пароль, сделайте запрос на восстановление.'
+			return render(request, 'sign_up.html', context)
+		elif password == confirm_password:
+			user = User.objects.create_user(username=username, password=password)
+			login(request, user)
+			return redirect('account')
+		else:
+			context['error'] = 'Пароли не совпадают. Пожалуйста, попробуйте снова.'
+			return render(request, 'sign_up.html', context)
+	else:
+		context['error'] = 'Ошибка: неверный тип запроса.'
+		return render(request, 'sign_up.html', context)
 
 
 def sign_in(request):
 	is_authenticated = False
 	context = {'is_authenticated': is_authenticated}
-	return render(request, 'sign_in.html', context)
+
+	if request.method == 'POST':
+		username = request.POST.get('EMAIL')
+		password = request.POST.get('PASSWORD')
+		user = auth.authenticate(username=username, password=password)
+
+		if user is not None:
+			auth.login(request, user)
+			return redirect('account')
+		else:
+			context['error'] = 'Неверный логин или пароль'
+			return render(request, 'sign_in.html', context)
+	else:
+		context['error'] = 'Ошибка: неверный тип запроса.'
+		return render(request, 'sign_in.html', context)
 
 
 def restore(request):
