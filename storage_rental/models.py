@@ -48,16 +48,35 @@ class Cell(models.Model):
     occupied_until = models.DateTimeField()
     price = models.CharField(max_length=250)
 
+    class Meta:
+        verbose_name_plural = "Ячейки"
+
 
 class Storage(models.Model):
     storage_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=250)
+    city = models.CharField(max_length=250)
     address = models.CharField(max_length=1024)
     phone_number = PhoneNumberField(blank=True)
     email = models.EmailField(blank=True)
     count_cells = models.IntegerField()
     count_free_cells = models.IntegerField()
+    temperature = models.FloatField()
+    height = models.FloatField()
     cells = models.ForeignKey(Cell, on_delete=models.CASCADE, related_name='storage_cells')
+
+    class Meta:
+        verbose_name_plural = "Склады"
+
+
+class Image(models.Model):
+    image = models.ImageField(upload_to='image')
+    image_number = models.IntegerField(default=0, blank=True)
+    storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
+
+    class Meta:
+        ordering = ['image_number']
+        verbose_name_plural = "Картинки"
 
 
 class Order(models.Model):
@@ -69,6 +88,7 @@ class Order(models.Model):
 
     class Meta:
         unique_together = ['cell_id']
+        verbose_name_plural = "Заказы"
 
 
 class Alert(models.Model):
@@ -77,3 +97,6 @@ class Alert(models.Model):
     alert_text = models.TextField(blank=True)
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=250, default='отправлено')
+
+    class Meta:
+        verbose_name_plural = "Оповщения"
