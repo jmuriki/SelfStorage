@@ -111,8 +111,12 @@ def restore(request):
 def change_user_info(request):
 	if request.method == 'POST':
 		user = request.user
-		user.email = request.POST.get('EMAIL_EDIT')
+
+		user.name = request.POST.get('NAME_EDIT')
+		user.surname = request.POST.get('SURNAME_EDIT')
 		user.phone_number = request.POST.get('PHONE_EDIT')
+		
+		user.email = request.POST.get('EMAIL_EDIT')
 		new_password = request.POST.get('PASSWORD_EDIT')
 		if new_password:
 			user.set_password(new_password)

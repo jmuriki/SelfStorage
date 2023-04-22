@@ -25,6 +25,10 @@
 						<div class="col-12 col-sm-7 d-flex flex-column">
 							<form method="POST" action="{% url 'change_user_info' %}">
 								{% csrf_token %}
+								<label class="fs_24 SelfStorage_green ms-2" for="NAME">Имя</label>
+								<input type="text" name="NAME_EDIT" id="NAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.name|default:'' }}" disabled>
+								<label class="fs_24 SelfStorage_green ms-2" for="SURNAME">Фамилия</label>
+								<input type="text" name="SURNAME_EDIT" id="SURNAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.surname|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="EMAIL">E-mail</label>
 								<input type="email" name="EMAIL_EDIT" id="EMAIL" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.email|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="PHONE">Телефон</label>
@@ -36,6 +40,8 @@
 								<script>
 									document.getElementById('edit').addEventListener('click', e => {
 										e.preventDefault()
+										document.getElementById('NAME').disabled = false
+										document.getElementById('SURNAME').disabled = false
 										document.getElementById('EMAIL').disabled = false
 										document.getElementById('PHONE').disabled = false
 										document.getElementById('PASSWORD').disabled = false
@@ -45,6 +51,8 @@
 									})
 									document.getElementById('save').addEventListener('click', () => {
 										setTimeout(() => {
+											document.getElementById('NAME').disabled = true
+											document.getElementById('SURNAME').disabled = true
 											document.getElementById('EMAIL').disabled = true
 											document.getElementById('PHONE').disabled = true
 											document.getElementById('PASSWORD').disabled = true
