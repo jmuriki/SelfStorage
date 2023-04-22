@@ -27,7 +27,7 @@
 		<div class="collapse navbar-collapse justify-content-end" id="navbar">
 			<ul class="navbar-nav">
 
-{% if is_authenticated %}
+{% if user.is_authenticated %}
 				<li class="nav-item d-flex align-items-center me-5">
 					<div class="d-flex justify-content-center align-items-center rounded-pill SelfStorage__bg_green me-2" style="height: 36px; width: 36px;">
 						<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="white" class="bi bi-telephone-fill" viewBox="0 0 16 16">
@@ -48,13 +48,13 @@
 					<a class="nav-link SelfStorage_black" href="{% url 'rent_box' %}">Арендовать бокс</a>
 				</li>
 
-{% if not is_authenticated %}
+{% if not user.is_authenticated %}
 				<li class="nav-item me-5">
 					<a class="nav-link SelfStorage_green" href="#" data-bs-toggle="modal" data-bs-target="#SignModal">Войти</a>
 				</li>
 {% endif %}
 
-{% if not is_authenticated %}
+{% if not user.is_authenticated %}
 				<li class="nav-item d-flex align-items-center">
 					<div class="d-flex justify-content-center align-items-center rounded-pill SelfStorage__bg_green me-2" style="height: 36px; width: 36px;">
 						<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="white" class="bi bi-telephone-fill" viewBox="0 0 16 16">
@@ -65,7 +65,7 @@
 				</li>
 {% endif %}
 
-{% if is_authenticated %}
+{% if user.is_authenticated %}
 				<li class="nav-item d-flex align-items-center me-5">
 					<a href="#" class="me-2 mb-1">
 						<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#F28A4F" class="bi bi-bell" viewBox="0 0 16 16">
@@ -86,7 +86,7 @@
 	</nav>
 </header>
 
-{% if not is_authenticated %}
+{% if not user.is_authenticated %}
 <aside class="modal fade" id="RegModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
 		<div class="modal-content">

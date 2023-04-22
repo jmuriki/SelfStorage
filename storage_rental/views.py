@@ -6,80 +6,53 @@ from django.contrib import auth
 
 
 def index(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'index.html', context)
+	return render(request, 'index.html')
 
 
 def tariffs(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'tariffs.html', context)
+	return render(request, 'tariffs.html')
 
 
 def calculator(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'calculator.html', context)
+	return render(request, 'calculator.html')
 
 
 def rent_box(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'rent_box.html', context)
+	return render(request, 'rent_box.html')
 
 
 def faq(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'faq.html', context)
+	return render(request, 'faq.html')
 
 
 def locations(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'locations.html', context)
+	return render(request, 'locations.html')
 
 
 def contacts(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'contacts.html', context)
+	return render(request, 'contacts.html')
 
 
 def customers_reviews(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'customers_reviews.html', context)
+	return render(request, 'customers_reviews.html')
 
 
 def privacy_policy(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'privacy_policy.html', context)
+	return render(request, 'privacy_policy.html')
 
 
 def documents(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'documents.html', context)
+	return render(request, 'documents.html')
 
 
 def account(request):
-	is_authenticated = request.user.is_authenticated
-	context = {
-		'is_authenticated': is_authenticated,
-	}
-
-	if is_authenticated:
-		return render(request, 'account.html', context)
+	if request.user.is_authenticated:
+		return render(request, 'account.html')
 	return redirect('main_page')
 
 
 def sign_up(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-
+	context = {}
 	if request.method == 'POST':
 		username = request.POST['EMAIL_CREATE']
 		password = request.POST['PASSWORD_CREATE']
@@ -102,9 +75,7 @@ def sign_up(request):
 
 
 def sign_in(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-
+	context = {}
 	if request.method == 'POST':
 		username = request.POST.get('EMAIL')
 		password = request.POST.get('PASSWORD')
@@ -127,15 +98,11 @@ def sign_out(request):
 
 
 def restore(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
-	return render(request, 'restore.html', context)
+	return render(request, 'restore.html')
 
 
 @login_required
 def change_user_info(request):
-	is_authenticated = request.user.is_authenticated
-	context = {'is_authenticated': is_authenticated}
 	if request.method == 'POST':
 		user = request.user
 		user.email = request.POST.get('EMAIL_EDIT')
