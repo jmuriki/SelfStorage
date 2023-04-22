@@ -18,4 +18,5 @@ urlpatterns = [
     path('restore/', views.restore, name='restore'),
     path('account/', views.account, name='account'),
     path('change_user_info/', views.change_user_info, name='change_user_info'),
+    path('notifications/', views.notifications, name='notifications'),
 ]

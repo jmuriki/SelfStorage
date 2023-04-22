@@ -51,6 +51,12 @@ def account(request):
 	return redirect('main_page')
 
 
+def notifications(request):
+	if request.user.is_authenticated:
+		return render(request, 'notifications.html')
+	return redirect('main_page')
+
+
 def sign_up(request):
 	context = {}
 	if request.method == 'POST':
