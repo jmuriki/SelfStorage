@@ -2,10 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from storage_rental.models import Customer
 from django.contrib import auth
 
 
 def index(request):
+	if request.user.is_authenticated:
+		customer = Customer.objects.get(userid=request.user.id)
+		context = {'customer': customer}
+		return render(request, 'index.html', context)
 	return render(request, 'index.html')
 
 
@@ -47,7 +52,9 @@ def documents(request):
 
 def account(request):
 	if request.user.is_authenticated:
-		return render(request, 'account.html')
+		customer = Customer.objects.get(userid=request.user.id)
+		context = {'customer': customer}
+		return render(request, 'account.html', context)
 	return redirect('main_page')
 
 
@@ -70,6 +77,7 @@ def sign_up(request):
 			return render(request, 'sign_up.html', context)
 		elif password == confirm_password:
 			user = User.objects.create_user(username=username, password=password)
+			Customer.objects.create(userid=user.id, email=user)
 			login(request, user)
 			return redirect('account')
 		else:
@@ -109,14 +117,17 @@ def restore(request):
 
 @login_required
 def change_user_info(request):
+	user = request.user
 	if request.method == 'POST':
-		user = request.user
-
-		user.name = request.POST.get('NAME_EDIT')
-		user.surname = request.POST.get('SURNAME_EDIT')
-		user.phone_number = request.POST.get('PHONE_EDIT')
 		
-		user.email = request.POST.get('EMAIL_EDIT')
+		customer = Customer.objects.get(userid=user.id)
+		if customer:
+			customer.name = request.POST.get('NAME_EDIT')
+			customer.surname = request.POST.get('SURNAME_EDIT')
+			customer.phone_number = request.POST.get('PHONE_EDIT')
+			customer.email = request.POST.get('EMAIL_EDIT')
+			customer.save()
+
 		new_password = request.POST.get('PASSWORD_EDIT')
 		if new_password:
 			user.set_password(new_password)

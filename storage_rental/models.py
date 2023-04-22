@@ -12,7 +12,7 @@ def create_qr_code():
     return filename
 
 
-class User(AbstractUser):
+class Customer(AbstractUser):
     userid = models.IntegerField(primary_key=True)
     login = models.CharField(max_length=32, blank=True, unique=True)
     email = models.EmailField(max_length=320, blank=True)
@@ -80,7 +80,7 @@ class Image(models.Model):
 
 
 class Order(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     cell_id = models.ForeignKey(Cell, on_delete=models.CASCADE)
     start_booking = models.DateTimeField()
     end_booking = models.DateTimeField()
@@ -92,7 +92,7 @@ class Order(models.Model):
 
 
 class Alert(models.Model):
-    user = models.ManyToManyField('User')
+    user = models.ManyToManyField('Customer')
     alert_name = models.CharField(max_length=250)
     alert_text = models.TextField(blank=True)
     date = models.DateTimeField(auto_now_add=True)
