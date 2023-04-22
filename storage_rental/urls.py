@@ -19,4 +19,5 @@ urlpatterns = [
     path('account/', views.account, name='account'),
     path('change_user_info/', views.change_user_info, name='change_user_info'),
     path('notifications/', views.notifications, name='notifications'),
+    path('payment/', views.payment, name='payment'),
 ]

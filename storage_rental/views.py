@@ -134,3 +134,12 @@ def change_user_info(request):
 		user.save()
 		return redirect('account')
 	return redirect('account')
+
+
+def payment(request):
+	payment = None
+	message = "Оплата не прошла."
+	if payment:
+		message = "Оплата прошла успешно."
+	context = {'payment_result': message}
+	return render(request, 'payment.html', context)
