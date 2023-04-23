@@ -146,13 +146,13 @@ def restore(request):
 def change_user_info(request):
     user = request.user
     if request.method == 'POST':
-
         customer = Customer.objects.get(user=request.user)
         if customer:
             customer.name = request.POST.get('NAME_EDIT')
             customer.surname = request.POST.get('SURNAME_EDIT')
             customer.phone_number = request.POST.get('PHONE_EDIT')
             customer.email = request.POST.get('EMAIL_EDIT')
+            customer.avatar = request.FILES.get('AVATAR_EDIT')
             customer.save()
 
         new_password = request.POST.get('PASSWORD_EDIT')

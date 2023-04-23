@@ -15,7 +15,7 @@ def create_qr_code():
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = email = models.EmailField(max_length=320, blank=True)
-    avatar = models.ImageField(upload_to='static/img/', blank=True)
+    avatar = models.ImageField(upload_to='', blank=True)
     name = models.CharField(max_length=250, blank=True)
     surname = models.CharField(max_length=250, blank=True)
     phone_number = PhoneNumberField(blank=True)
