@@ -19,7 +19,11 @@
 				<div class="tab-pane fade show active" id="LK" role="tabpanel" aria-labelledby="LK-tab">
 					<div class="row">
 						<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
-							<img src="{% static 'img/image10.png' %}" class="rounded-pill mb-3" alt="">
+							{% if customer.avatar %}
+								<img src="{{ customer.avatar.url }}" class="rounded-pill mb-3" alt="">
+							{% else %}
+								<img src="#" class="rounded-pill mb-3" alt="">
+							{% endif %}
 							<h4>{{ customer.name|default:'Имя' }} {{ customer.surname|default:'Фамилия' }}</h4>
 						</div>
 						<div class="col-12 col-sm-7 d-flex flex-column">

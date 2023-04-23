@@ -15,6 +15,7 @@ def create_qr_code():
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = email = models.EmailField(max_length=320, blank=True)
+    avatar = models.ImageField(upload_to='static/img/', blank=True)
     name = models.CharField(max_length=250, blank=True)
     surname = models.CharField(max_length=250, blank=True)
     phone_number = PhoneNumberField(blank=True)
@@ -67,7 +68,7 @@ class Storage(models.Model):
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='image')
+    image = models.ImageField(upload_to='static/img/')
     image_number = models.IntegerField(default=0, blank=True)
     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
 
