@@ -152,9 +152,9 @@ def change_user_info(request):
             customer.surname = request.POST.get('SURNAME_EDIT')
             customer.phone_number = request.POST.get('PHONE_EDIT')
             customer.email = request.POST.get('EMAIL_EDIT')
-            customer.avatar = request.FILES.get('AVATAR_EDIT')
+            if request.FILES.get('AVATAR_EDIT'):
+                customer.avatar = request.FILES.get('AVATAR_EDIT')
             customer.save()
-
         new_password = request.POST.get('PASSWORD_EDIT')
         if new_password:
             user.set_password(new_password)
