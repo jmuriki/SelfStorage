@@ -144,3 +144,5 @@ cython_debug/
 
 # This project
 .DS_Store
+media/
+migrations/
