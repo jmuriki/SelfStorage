@@ -13,13 +13,11 @@ def create_qr_code():
 
 
 class Customer(AbstractUser):
-    userid = models.IntegerField(primary_key=True)
-    login = models.CharField(max_length=32, blank=True, unique=True)
-    email = models.EmailField(max_length=320, blank=True)
-    name = models.CharField(max_length=250)
-    surname = models.CharField(max_length=250)
-    phone_number = PhoneNumberField()
-    bookings = models.ManyToManyField('Order', related_name='users')
+    login = models.CharField(max_length=32, unique=True)
+    name = models.CharField(max_length=250, blank=True)
+    surname = models.CharField(max_length=250, blank=True)
+    phone_number = PhoneNumberField(blank=True)
+    bookings = models.ManyToManyField('Order', related_name='customers', blank=True)
 
     groups = models.ManyToManyField(
         Group,
@@ -35,7 +33,6 @@ class Customer(AbstractUser):
     )
 
     USERNAME_FIELD = 'login'
-    REQUIRED_FIELDS = 'email', 'name', 'surname', 'phone_number'
 
     def str(self):
         return self.login
