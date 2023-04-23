@@ -4,63 +4,82 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from storage_rental.models import Customer
 from django.contrib import auth
+from functools import wraps
 
 
-def index(request):
-	if request.user.is_authenticated:
-		customer = Customer.objects.get(userid=request.user.id)
-		context = {'customer': customer}
-		return render(request, 'index.html', context)
-	return render(request, 'index.html')
+def if_authenticated(view_func):
+    @wraps(view_func)
+    def wrapper(request):
+        if request.user.is_authenticated:
+            customer = Customer.objects.get(login=request.user)
+            context = {'customer': customer}
+            return view_func(request, context=context)
+        else:
+            return view_func(request)
+    return wrapper
 
 
-def tariffs(request):
-	return render(request, 'tariffs.html')
+@if_authenticated
+def index(request, context=None):
+    return render(request, 'index.html', context)
 
 
-def calculator(request):
-	return render(request, 'calculator.html')
+@if_authenticated
+def tariffs(request, context=None):
+	return render(request, 'tariffs.html', context)
 
 
-def rent_box(request):
-	return render(request, 'rent_box.html')
+@if_authenticated
+def calculator(request, context=None):
+	return render(request, 'calculator.html', context)
 
 
-def faq(request):
-	return render(request, 'faq.html')
+@if_authenticated
+def rent_box(request, context=None):
+	return render(request, 'rent_box.html', context)
 
 
-def locations(request):
-	return render(request, 'locations.html')
+@if_authenticated
+def faq(request, context=None):
+	return render(request, 'faq.html', context)
 
 
-def contacts(request):
-	return render(request, 'contacts.html')
+@if_authenticated
+def locations(request, context=None):
+	return render(request, 'locations.html', context)
 
 
-def customers_reviews(request):
-	return render(request, 'customers_reviews.html')
+@if_authenticated
+def contacts(request, context=None):
+	return render(request, 'contacts.html', context)
 
 
-def privacy_policy(request):
-	return render(request, 'privacy_policy.html')
+@if_authenticated
+def customers_reviews(request, context=None):
+	return render(request, 'customers_reviews.html', context)
 
 
-def documents(request):
-	return render(request, 'documents.html')
+@if_authenticated
+def privacy_policy(request, context=None):
+	return render(request, 'privacy_policy.html', context)
 
 
-def account(request):
-	if request.user.is_authenticated:
-		customer = Customer.objects.get(userid=request.user.id)
-		context = {'customer': customer}
+@if_authenticated
+def documents(request, context=None):
+	return render(request, 'documents.html', context)
+
+
+@if_authenticated
+def account(request, context=None):
+	if context:
 		return render(request, 'account.html', context)
 	return redirect('main_page')
 
 
-def notifications(request):
-	if request.user.is_authenticated:
-		return render(request, 'notifications.html')
+@if_authenticated
+def notifications(request, context=None):
+	if context:
+		return render(request, 'notifications.html', context)
 	return redirect('main_page')
 
 
@@ -77,7 +96,7 @@ def sign_up(request):
 			return render(request, 'sign_up.html', context)
 		elif password == confirm_password:
 			user = User.objects.create_user(username=username, password=password)
-			Customer.objects.create(userid=user.id, email=user)
+			Customer.objects.create(login=user)
 			login(request, user)
 			return redirect('account')
 		else:
@@ -120,7 +139,7 @@ def change_user_info(request):
 	user = request.user
 	if request.method == 'POST':
 		
-		customer = Customer.objects.get(userid=user.id)
+		customer = Customer.objects.get(login=request.user)
 		if customer:
 			customer.name = request.POST.get('NAME_EDIT')
 			customer.surname = request.POST.get('SURNAME_EDIT')
@@ -136,6 +155,7 @@ def change_user_info(request):
 	return redirect('account')
 
 
+@login_required
 def payment(request):
 	payment = None
 	message = "Оплата не прошла."
