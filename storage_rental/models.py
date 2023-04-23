@@ -1,7 +1,7 @@
 import qrcode
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission, Group
 
 
@@ -12,30 +12,30 @@ def create_qr_code():
     return filename
 
 
-class Customer(AbstractUser):
-    login = models.CharField(max_length=32, unique=True)
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = email = models.EmailField(max_length=320, blank=True)
     name = models.CharField(max_length=250, blank=True)
     surname = models.CharField(max_length=250, blank=True)
     phone_number = PhoneNumberField(blank=True)
     bookings = models.ManyToManyField('Order', related_name='customers', blank=True)
 
     groups = models.ManyToManyField(
-        Group,
+        'auth.Group',
         verbose_name='groups',
         blank=True,
         related_name='storage_rental_users'
     )
+
     user_permissions = models.ManyToManyField(
-        Permission,
+        'auth.Permission',
         verbose_name='user permissions',
         blank=True,
         related_name='storage_rental_users_permissions'
     )
 
-    USERNAME_FIELD = 'login'
-
-    def str(self):
-        return self.login
+    def __str__(self):
+        return self.email
 
 
 class Cell(models.Model):
