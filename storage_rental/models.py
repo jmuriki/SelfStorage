@@ -68,7 +68,7 @@ class Storage(models.Model):
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='static/img/')
+    image = models.ImageField(upload_to='')
     image_number = models.IntegerField(default=0, blank=True)
     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
 
