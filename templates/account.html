@@ -30,7 +30,7 @@
 							<form method="POST" action="{% url 'change_user_info' %}" enctype="multipart/form-data">
 								{% csrf_token %}
 								<label class="fs_24 SelfStorage_green ms-2" for="AVATAR">Аватар</label>
-								<input type="file" name="AVATAR_EDIT" id="AVATAR" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.avatar|default:'' }}" disabled>
+								<input type="file" name="AVATAR_EDIT" id="AVATAR" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.avatar.url|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="NAME">Имя</label>
 								<input type="text" name="NAME_EDIT" id="NAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.name|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="SURNAME">Фамилия</label>
@@ -67,7 +67,7 @@
 											document.getElementById('PASSWORD').type = 'password'
 											document.getElementById('edit').style.display = 'inline-block'
 											document.getElementById('save').style.display = 'none'
-										}, 0)
+										}, 1)
 									})
 								</script>
 							</form>
