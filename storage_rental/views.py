@@ -8,7 +8,9 @@ from storage_rental.models import Customer
 from django.dispatch import receiver
 
 from functools import wraps
-
+from yookassa import Configuration, Payment
+from selfstorage.settings import PAY_ACC, PAY_KEY
+from urllib.parse import urlparse
 
 def if_authenticated(view_func):
     @wraps(view_func)
@@ -165,9 +167,37 @@ def change_user_info(request):
 
 @login_required
 def payment(request):
-    payment = None
+    absolute_url = request.build_absolute_uri()
+    parsed_url = urlparse(absolute_url)
+    ret_url = f'{parsed_url.scheme}://{parsed_url.netloc}/pay_result?payment_success=1'
+    yookassa = make_pay(PAY_ACC, PAY_KEY, 153.42, 'Платёж за хранение вещей на складе', ret_url)
+    return redirect(yookassa.confirmation.confirmation_url)
+
+
+def pay_result(request):
+    payment_res = request.GET['payment_success']
     message = "Оплата не прошла."
-    if payment:
+    if payment_res:
         message = "Оплата прошла успешно."
-    context = {'payment_result': message}
+    context = {'payment_res': message}
+
     return render(request, 'payment.html', context)
+
+
+def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
+    Configuration.account_id = pay_account
+    Configuration.secret_key = pay_secretkey
+
+    return Payment.create({
+        "amount": {
+            "value": summa,
+            "currency": "RUB"
+        },
+        "confirmation": {
+            "type": "redirect",
+            "return_url": ret_url
+        },
+        "capture": True,
+        "description": descr
+    })
+
