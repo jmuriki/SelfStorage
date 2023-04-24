@@ -6,12 +6,12 @@ from django.contrib.auth.models import Permission, Group
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = email = models.EmailField(max_length=320, blank=True)
+    email = models.EmailField(max_length=320, blank=True)
     avatar = models.ImageField(upload_to='', blank=True)
     name = models.CharField(max_length=250, blank=True)
     surname = models.CharField(max_length=250, blank=True)
     phone_number = PhoneNumberField(blank=True)
-    bookings = models.ManyToManyField('Order', related_name='customers', blank=True)
+    # bookings = models.ManyToManyField('Order', related_name='customers', blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -31,62 +31,62 @@ class Customer(models.Model):
         return self.email
 
 
-class Cell(models.Model):
-    cell_id = models.IntegerField(primary_key=True)
-    capacity = models.FloatField()
-    occupied = models.BooleanField(default=False)
-    occupied_until = models.DateTimeField()
-    price = models.CharField(max_length=250)
+# class Cell(models.Model):
+#     cell_id = models.IntegerField(primary_key=True)
+#     capacity = models.FloatField()
+#     occupied = models.BooleanField(default=False)
+#     occupied_until = models.DateTimeField()
+#     price = models.CharField(max_length=250)
 
-    class Meta:
-        verbose_name_plural = "Ячейки"
-
-
-class Storage(models.Model):
-    storage_id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=250)
-    city = models.CharField(max_length=250)
-    address = models.CharField(max_length=1024)
-    phone_number = PhoneNumberField(blank=True)
-    email = models.EmailField(blank=True)
-    count_cells = models.IntegerField()
-    count_free_cells = models.IntegerField()
-    temperature = models.FloatField()
-    height = models.FloatField()
-    cells = models.ForeignKey(Cell, on_delete=models.CASCADE, related_name='storage_cells')
-
-    class Meta:
-        verbose_name_plural = "Склады"
+#     class Meta:
+#         verbose_name_plural = "Ячейки"
 
 
-class Image(models.Model):
-    image = models.ImageField(upload_to='')
-    image_number = models.IntegerField(default=0, blank=True)
-    storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
+# class Storage(models.Model):
+#     storage_id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=250)
+#     city = models.CharField(max_length=250)
+#     address = models.CharField(max_length=1024)
+#     phone_number = PhoneNumberField(blank=True)
+#     email = models.EmailField(blank=True)
+#     count_cells = models.IntegerField()
+#     count_free_cells = models.IntegerField()
+#     temperature = models.FloatField()
+#     height = models.FloatField()
+#     cells = models.ForeignKey(Cell, on_delete=models.CASCADE, related_name='storage_cells')
 
-    class Meta:
-        ordering = ['image_number']
-        verbose_name_plural = "Картинки"
-
-
-class Order(models.Model):
-    user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cell_id = models.ForeignKey(Cell, on_delete=models.CASCADE)
-    start_booking = models.DateTimeField()
-    end_booking = models.DateTimeField()
-    status = models.CharField(max_length=250, default='создан')
-
-    class Meta:
-        unique_together = ['cell_id']
-        verbose_name_plural = "Заказы"
+#     class Meta:
+#         verbose_name_plural = "Склады"
 
 
-class Alert(models.Model):
-    user = models.ManyToManyField('Customer')
-    alert_name = models.CharField(max_length=250)
-    alert_text = models.TextField(blank=True)
-    date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=250, default='отправлено')
+# class Image(models.Model):
+#     image = models.ImageField(upload_to='')
+#     image_number = models.IntegerField(default=0, blank=True)
+#     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
 
-    class Meta:
-        verbose_name_plural = "Оповщения"
+#     class Meta:
+#         ordering = ['image_number']
+#         verbose_name_plural = "Картинки"
+
+
+# class Order(models.Model):
+#     user_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+#     cell_id = models.ForeignKey(Cell, on_delete=models.CASCADE)
+#     start_booking = models.DateTimeField()
+#     end_booking = models.DateTimeField()
+#     status = models.CharField(max_length=250, default='создан')
+
+#     class Meta:
+#         unique_together = ['cell_id']
+#         verbose_name_plural = "Заказы"
+
+
+# class Alert(models.Model):
+#     user = models.ManyToManyField('Customer')
+#     alert_name = models.CharField(max_length=250)
+#     alert_text = models.TextField(blank=True)
+#     date = models.DateTimeField(auto_now_add=True)
+#     status = models.CharField(max_length=250, default='отправлено')
+
+#     class Meta:
+#         verbose_name_plural = "Оповщения"

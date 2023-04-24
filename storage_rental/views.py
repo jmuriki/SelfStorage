@@ -178,13 +178,15 @@ def payment(request):
     yookassa = make_pay(PAY_ACC, PAY_KEY, 153.42, 'Платёж за хранение вещей на складе', ret_url)
     return redirect(yookassa.confirmation.confirmation_url)
 
-
-def pay_result(request):
+@if_authenticated
+def pay_result(request, context=None):
+    if not context:
+        context = {}
     payment_res = request.GET['payment_success']
     message = "Оплата не прошла."
     if payment_res:
         message = "Оплата прошла успешно."
-    context = {'payment_res': message}
+    context['payment_res'] = message
 
     return render(request, 'pay_result.html', context)
 
