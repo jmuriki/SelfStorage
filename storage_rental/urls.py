@@ -21,4 +21,5 @@ urlpatterns = [
     path('notifications/', views.notifications, name='notifications'),
     path('payment/', views.payment, name='payment'),
     path('pay_result/', views.pay_result, name='pay_result'),
+    path('qr/', views.qr, name='qr'),
 ]

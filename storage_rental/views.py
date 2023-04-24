@@ -1,7 +1,11 @@
+import os
+import qrcode
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models.signals import post_save
 from django.shortcuts import render, redirect
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from storage_rental.models import Customer
@@ -201,3 +205,19 @@ def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
         "capture": True,
         "description": descr
     })
+
+
+@login_required
+def qr(request):
+    name, _ = str(request.user).split("@")
+    data = 'QRcode'
+    qr_name = create_qr_code(name, data)
+    context = {'qrcode': qr_name}
+    return render(request, 'qr.html', context)
+
+
+def create_qr_code(name, data):
+    qr_name = f'{name}.png'
+    qr_path = os.path.join(settings.BASE_DIR, 'static', qr_name)
+    qrcode.make(data).save(qr_path)
+    return qr_name

@@ -1,15 +1,7 @@
-import qrcode
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission, Group
-
-
-def create_qr_code():
-    data = 'Мама мыла раму, сидя на подоконнике'  # self.get_order_num(self.id, self.user)
-    filename = f'{data}.png'
-    qrcode.make(data).save(filename)
-    return filename
 
 
 class Customer(models.Model):
