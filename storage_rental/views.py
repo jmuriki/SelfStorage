@@ -12,6 +12,7 @@ from yookassa import Configuration, Payment
 from selfstorage.settings import PAY_ACC, PAY_KEY
 from urllib.parse import urlparse
 
+
 def if_authenticated(view_func):
     @wraps(view_func)
     def wrapper(request):
@@ -181,7 +182,7 @@ def pay_result(request):
         message = "Оплата прошла успешно."
     context = {'payment_res': message}
 
-    return render(request, 'payment.html', context)
+    return render(request, 'pay_result.html', context)
 
 
 def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
@@ -200,4 +201,3 @@ def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
         "capture": True,
         "description": descr
     })
-
