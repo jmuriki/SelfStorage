@@ -34,6 +34,9 @@ DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
 
+PAY_ACC = env.str('PAY_ACC')
+PAY_KEY = env.str('PAY_KEY')
+
 INTERNAL_IPS = [
     '127.0.0.1'
 ]

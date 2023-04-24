@@ -2,6 +2,8 @@ scratch.py
 .idea/
 tests/
 docs/
+migrations/
+_Notes.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
