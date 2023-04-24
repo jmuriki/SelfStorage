@@ -134,6 +134,9 @@
 							{% endfor %}
 						</ul>
 					{% else %}
+						<h4 class="SelfStorage_grey my-5">Используйте QR-код,<br>чтобы открыть арендованную ячейку.</h4>
+						<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Показать QR-код</button></div>
+
 						<h4 class="SelfStorage_grey my-5">У вас еще нет аренды :(<br>Но вы можете арендовать свой первый бокс  по  привлекательной цене прямо сейчас</h4>
 						<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду бокса</button></div>
 						<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
