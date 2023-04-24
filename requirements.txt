@@ -6,3 +6,4 @@ Pillow==9.5.0
 phonenumbers==8.13.10
 django-phonenumber-field[phonenumbers]==7.0.2
 rollbar==0.16.3
+yookassa==2.3.5
