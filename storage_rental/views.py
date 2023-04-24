@@ -218,6 +218,6 @@ def qr(request):
 
 def create_qr_code(name, data):
     qr_name = f'{name}.png'
-    qr_path = os.path.join(settings.BASE_DIR, 'static', qr_name)
+    qr_path = os.path.join(settings.BASE_DIR, 'media', qr_name)
     qrcode.make(data).save(qr_path)
     return qr_name

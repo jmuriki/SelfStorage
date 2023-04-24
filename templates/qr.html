@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 	{% block title %}
 	<title>QR</title>
 	{% endblock %}
@@ -8,7 +9,7 @@
 {% endblock %}
 {% block content %}
 	<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
-		<img src="{% static qrcode %}" class="rounded-pill mb-3" alt="">
+		<img src="{% media qrcode %}" class="rounded-pill mb-3" alt="">
 		<h2>QR-code</h2>
 	</div>
 {% endblock %}
