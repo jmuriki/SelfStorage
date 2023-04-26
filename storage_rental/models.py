@@ -2,6 +2,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission, Group
+import datetime
 
 
 class Customer(models.Model):
@@ -148,40 +149,41 @@ class Cell(models.Model):
         verbose_name_plural = 'Ячейки'
 
 
-# class Order(models.Model):
-#     customer = models.ForeignKey(
-#         Customer,
-#         on_delete=models.CASCADE,
-#         related_name='customer',
-#         verbose_name='Заказчик'
-#     )
-#     cell = models.ManyToManyField(
-#         Cell,
-#         on_delete=models.CASCADE,
-#         related_name='cells',
-#         verbose_name='Ячейки'
-#     )
-#     date_from = models.DateTimeField('Дата начала хранения')
-#     date_to = models.DateTimeField('Дата окончания хранения')
-#     # Создан, Оплачен, Закрыт, Просрочен
-#     status = models.CharField(
-#         max_length=250,
-#         default='создан'
-#     )
-#
-#     class Meta:
-#         verbose_name = 'Заказ'
-#         verbose_name_plural = 'Заказы'
+ORDER_STATUSES = [
+    ('created', 'Создан'),
+    ('closed', 'Завершён'),
+    ('payed', 'Оплачен'),
+    ('overdue', 'Просрочен'),
+]
 
 
-# class Image(models.Model):
-#     image = models.ImageField(upload_to='')
-#     image_number = models.IntegerField(default=0, blank=True)
-#     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name='imgs')
+class Order(models.Model):
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name='customer',
+        verbose_name='Заказчик'
+    )
+    cells = models.ManyToManyField(
+        Cell,
+        related_name='orders',
+        verbose_name='Ячейки заказа'
+    )
+    date_from = models.DateField('Дата начала хранения')
+    date_to = models.DateField('Дата окончания хранения')
+    status = models.CharField(
+        max_length=10,
+        choices=ORDER_STATUSES,
+        default='created',
+        verbose_name='Статус заказа'
+    )
 
-#     class Meta:
-#         ordering = ['image_number']
-#         verbose_name_plural = "Картинки"
+    def __str__(self):
+        return f'{self.customer}, {self.date_from.strftime("%d.%m.%Y")}-{self.date_to.strftime("%d.%m.%Y")}'
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
 
 
 # class Alert(models.Model):

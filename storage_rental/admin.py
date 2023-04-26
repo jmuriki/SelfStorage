@@ -66,11 +66,32 @@ class CellAdmin(admin.ModelAdmin):
     readonly_fields = [
         'square', 'capacity',
     ]
+    list_filter = ['storage', ]
+
+
+class CellsInline(admin.TabularInline):
+    model = Order.cells.through
+    raw_id_fields = ('cell',)
+    verbose_name = 'Ячейка'
+    verbose_name_plural = 'Ячейки заказа'
+    extra = 0
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['customer', 'status', 'date_from', 'date_to']
+    fieldsets = (
+        (None, {
+                    'fields': (('customer', 'status', ),
+                               ('date_from', 'date_to', ),
+                               )
+                }
+         ),
+    )
+    inlines = [CellsInline]
 
 
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Storage, StorageAdmin)
 admin.site.register(Cell, CellAdmin)
-# admin.site.register(Storage)
-# admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
 # admin.site.register(Alert)
