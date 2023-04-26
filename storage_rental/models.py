@@ -93,7 +93,7 @@ class Cell(models.Model):
         Storage,
         on_delete=models.CASCADE,
         default=None,
-        related_name='storage',
+        related_name='cells',
         verbose_name='Склад'
     )
     cell_number = models.CharField(
@@ -161,7 +161,7 @@ class Order(models.Model):
     customer = models.ForeignKey(
         Customer,
         on_delete=models.CASCADE,
-        related_name='customer',
+        related_name='orders',
         verbose_name='Заказчик'
     )
     cells = models.ManyToManyField(

@@ -5,10 +5,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models.signals import post_save
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from storage_rental.models import Customer
+from storage_rental.models import Customer, Storage, Cell
 from django.dispatch import receiver
 
 from functools import wraps
@@ -45,7 +46,19 @@ def calculator(request, context=None):
 
 
 @if_authenticated
-def rent_box(request, context=None):
+def rent_box(request, context={}):
+    cell_sizes = ["all", "to3", "to10", "from10"]
+    storages = Storage.objects.prefetch_related('cells')
+    all_free_cells = Cell.objects.filter(occupied=False)
+    # to3_free_cells = Cell.objects.filter(occupied=False).filter(square__lt=3)
+    # to10_free_cells = Cell.objects.filter(occupied=False).filter(square__lt=10)
+    # from10_free_cells = Cell.objects.filter(occupied=False).filter(square__gt=10)
+    context['cell_sizes'] = cell_sizes
+    context['storages'] = storages
+    context['all_free_cells'] = all_free_cells
+    # context['to3'] = to3_free_cells
+    # context['to10'] = to10_free_cells
+    # context['from10'] = from10_free_cells
     return render(request, 'rent_box.html', context)
 
 
@@ -81,7 +94,9 @@ def documents(request, context=None):
 
 @if_authenticated
 def account(request, context=None):
+    user_id = request.user.id
     if context:
+        context['customer'] = Customer.objects.get(id=user_id)
         return render(request, 'account.html', context)
     return redirect('main_page')
 
@@ -93,8 +108,7 @@ def notifications(request, context=None):
     return redirect('main_page')
 
 
-def sign_up(request):
-    context = {}
+def sign_up(request, context={}):
     if request.method == 'POST':
         username = request.POST['EMAIL_CREATE']
         password = request.POST['PASSWORD_CREATE']
@@ -122,8 +136,7 @@ def create_customer(sender, instance, created, **kwargs):
         Customer.objects.create(user=instance, email=instance)
 
 
-def sign_in(request):
-    context = {}
+def sign_in(request, context={}):
     if request.method == 'POST':
         username = request.POST.get('EMAIL')
         password = request.POST.get('PASSWORD')
@@ -172,16 +185,19 @@ def change_user_info(request):
 
 @login_required
 def payment(request):
+    if request.method == 'POST':
+        summa = request.POST.get('SUMM')
+        descr = request.POST.get('DESCR')
+    summa = 153.42
+    descr = "Описание предмета платежа"
     absolute_url = request.build_absolute_uri()
     parsed_url = urlparse(absolute_url)
     ret_url = f'{parsed_url.scheme}://{parsed_url.netloc}/pay_result?payment_success=1'
-    yookassa = make_pay(PAY_ACC, PAY_KEY, 153.42, 'Платёж за хранение вещей на складе', ret_url)
+    yookassa = make_pay(PAY_ACC, PAY_KEY, summa, descr, ret_url)
     return redirect(yookassa.confirmation.confirmation_url)
 
 @if_authenticated
-def pay_result(request, context=None):
-    if not context:
-        context = {}
+def pay_result(request, context={}):
     payment_res = request.GET['payment_success']
     message = "Оплата не прошла."
     if payment_res:
@@ -223,3 +239,21 @@ def create_qr_code(name, data):
     qr_path = os.path.join(settings.BASE_DIR, 'media', qr_name)
     qrcode.make(data).save(qr_path)
     return qr_name
+
+
+@if_authenticated
+def make_order(request, context=None):
+    if request.method == 'POST':
+        cell_id = request.POST.get('cell_id')
+        if not context:
+            request.session['chousen_cell'] = cell_id
+            request.session.modified = True
+            response = HttpResponse("Your choice was saved as a cookie!")
+            response.set_cookie('session_id', request.session.session_key)
+            return redirect('main_page')
+        else:
+            request.session['chousen_cell'] = cell_id
+            request.session.modified = True
+            response = HttpResponse("Your choice was saved as a cookie!")
+            response.set_cookie('session_id', request.session.session_key)
+            return redirect('account')
