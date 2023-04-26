@@ -111,10 +111,6 @@ class Cell(models.Model):
         null=False,
         verbose_name='Длина, м.'
     )
-    capacity = models.FloatField(
-        null=False,
-        verbose_name='Объём, м.куб.'
-    )
     occupied = models.BooleanField(
         default=False,
         verbose_name='Занята'
@@ -126,6 +122,21 @@ class Cell(models.Model):
 
     def __str__(self):
         return f'{self.storage.name}, {self.level} эт. №{self.cell_number}'
+
+    @property
+    def square(self):
+        width = 0 if self.width is None else self.width
+        length = 0 if self.length is None else self.length
+        return width * length
+    square.fget.short_description = 'Площадь ячейки, м.кв.'
+
+    @property
+    def capacity(self):
+        width = 0 if self.width is None else self.width
+        length = 0 if self.length is None else self.length
+        height = 0 if self.height is None else self.height
+        return width * length * height
+    capacity.fget.short_description = 'Объём ячейки, м.куб.'
 
     class Meta:
         verbose_name = 'Ячейка'
