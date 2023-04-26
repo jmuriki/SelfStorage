@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from storage_rental.models import Customer, Storage, Cell
+from storage_rental.models import Customer, Storage, Cell, Order
 from django.dispatch import receiver
 
 from functools import wraps
@@ -18,31 +18,24 @@ from selfstorage.settings import PAY_ACC, PAY_KEY
 from urllib.parse import urlparse
 
 
+def save_to_cookies(request, key, payload):
+    request.session[key] = payload
+    request.session.modified = True
+    response = HttpResponse("Your choice was saved as a cookie!")
+    response.set_cookie('session_id', request.session.session_key)
+    return
+
+
 def if_authenticated(view_func):
     @wraps(view_func)
-    def wrapper(request):
+    def wrapper(request, context={}, *args, **kwargs):
         if request.user.is_authenticated:
             customer = Customer.objects.get(user=request.user)
-            context = {'customer': customer}
-            return view_func(request, context=context)
+            context['customer'] = customer
+            return view_func(request, context, *args, **kwargs)
         else:
-            return view_func(request)
+            return view_func(request, context, *args, **kwargs)
     return wrapper
-
-
-@if_authenticated
-def index(request, context=None):
-    return render(request, 'index.html', context)
-
-
-@if_authenticated
-def tariffs(request, context=None):
-    return render(request, 'tariffs.html', context)
-
-
-@if_authenticated
-def calculator(request, context=None):
-    return render(request, 'calculator.html', context)
 
 
 @if_authenticated
@@ -76,6 +69,21 @@ def rent_box(request, context={}):
 
 
 @if_authenticated
+def index(request, context=None):
+    return render(request, 'index.html', context)
+
+
+@if_authenticated
+def tariffs(request, context=None):
+    return render(request, 'tariffs.html', context)
+
+
+@if_authenticated
+def calculator(request, context=None):
+    return render(request, 'calculator.html', context)
+
+
+@if_authenticated
 def faq(request, context=None):
     return render(request, 'faq.html', context)
 
@@ -106,18 +114,28 @@ def documents(request, context=None):
 
 
 @if_authenticated
-def account(request, context=None):
-    user_id = request.user.id
+def notifications(request, context=None):
     if context:
-        context['customer'] = Customer.objects.get(id=user_id)
-        return render(request, 'account.html', context)
+        return render(request, 'notifications.html', context)
     return redirect('main_page')
 
 
 @if_authenticated
-def notifications(request, context=None):
+def account(request, context=None):
+    user_id = request.user.id
+    customer = Customer.objects.get(id=user_id)
+    cell_id = request.session.get('cell_id', None)
+    if cell_id:
+        cell = Cell.objects.get(id=cell_id)
+        new_order = Order.objects.create(customer=customer, status='created')
+        new_order.cells.add(cell)
+        new_order.save()
+        save_to_cookies(request, 'cell_id', None)
     if context:
-        return render(request, 'notifications.html', context)
+        context['customer'] = Customer.objects.prefetch_related('orders').get(id=user_id)
+        context['created_orders'] = Order.objects.filter(status='created', customer=customer)
+        context['payed_orders'] = Order.objects.filter(status='payed', customer=customer)
+        return render(request, 'account.html', context)
     return redirect('main_page')
 
 
@@ -136,10 +154,14 @@ def sign_up(request, context={}):
             login(request, user)
             return redirect('account')
         else:
+            context['sign_up'] = False
             context['error'] = 'Пароли не совпадают. Пожалуйста, попробуйте снова.'
             return render(request, 'sign_up.html', context)
     else:
-        context['error'] = 'Ошибка: неверный тип запроса.'
+        need_sign_up = request.session.get('need_sign_up')
+        if need_sign_up:
+            context['sign_up'] = True
+            save_to_cookies(request, 'need_sign_up', False)
         return render(request, 'sign_up.html', context)
 
 
@@ -181,8 +203,8 @@ def change_user_info(request):
     if request.method == 'POST':
         customer = Customer.objects.get(user=request.user)
         if customer:
-            customer.name = request.POST.get('NAME_EDIT')
-            customer.surname = request.POST.get('SURNAME_EDIT')
+            customer.first_name = request.POST.get('NAME_EDIT')
+            customer.last_name = request.POST.get('SURNAME_EDIT')
             customer.phone_number = request.POST.get('PHONE_EDIT')
             customer.email = request.POST.get('EMAIL_EDIT')
             if request.FILES.get('AVATAR_EDIT'):
@@ -191,16 +213,20 @@ def change_user_info(request):
         new_password = request.POST.get('PASSWORD_EDIT')
         if new_password:
             user.set_password(new_password)
-        user.save()
-        return redirect('account')
+            user.save()
+            return redirect('main_page')
     return redirect('account')
 
 
 @login_required
 def payment(request):
     if request.method == 'POST':
-        summa = request.POST.get('SUMM')
-        descr = request.POST.get('DESCR')
+        order_id = request.POST.get('order_id')
+        cell_id = request.POST.get('cell_id')
+        summa = request.POST.get('summa')
+        descr = request.POST.get('descr')
+        save_to_cookies(request, 'payed_cell_id', cell_id)
+        save_to_cookies(request, 'payed_order_id', order_id)
     summa = 153.42
     descr = "Описание предмета платежа"
     absolute_url = request.build_absolute_uri()
@@ -215,6 +241,12 @@ def pay_result(request, context={}):
     message = "Оплата не прошла."
     if payment_res:
         message = "Оплата прошла успешно."
+        payed_order_id = request.session.get('payed_order_id')
+        payed_order = Order.objects.get(id=payed_order_id)
+        payed_order.status = 'payed'
+        payed_order.save()
+        save_to_cookies(request, 'payed_cell_id', None)
+        save_to_cookies(request, 'payed_order_id', None)
     context['payment_res'] = message
 
     return render(request, 'pay_result.html', context)
@@ -240,10 +272,12 @@ def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
 
 @login_required
 def qr(request):
-    name, _ = str(request.user).split("@")
-    data = 'QRcode'
-    qr_name = create_qr_code(name, data)
-    context = {'qrcode': qr_name}
+    if request.method == 'POST':
+        qr_cell_id = request.POST.get('qr_cell_id')
+        qr_data = f"Это qr-код для открытия ячейки № {qr_cell_id}"
+        name, _ = str(request.user).split("@")
+        qr_name = create_qr_code(name, qr_data)
+        context = {'qrcode': qr_name}
     return render(request, 'qr.html', context)
 
 
@@ -258,15 +292,9 @@ def create_qr_code(name, data):
 def make_order(request, context=None):
     if request.method == 'POST':
         cell_id = request.POST.get('cell_id')
+        save_to_cookies(request, 'cell_id', cell_id)
         if not context:
-            request.session['chousen_cell'] = cell_id
-            request.session.modified = True
-            response = HttpResponse("Your choice was saved as a cookie!")
-            response.set_cookie('session_id', request.session.session_key)
-            return redirect('main_page')
-        else:
-            request.session['chousen_cell'] = cell_id
-            request.session.modified = True
-            response = HttpResponse("Your choice was saved as a cookie!")
-            response.set_cookie('session_id', request.session.session_key)
-            return redirect('account')
+            save_to_cookies(request, 'need_sign_up', True)
+            return redirect('sign_up')
+        return redirect('account')
+    return redirect('main_page')

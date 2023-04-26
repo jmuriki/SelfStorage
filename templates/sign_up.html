@@ -10,6 +10,17 @@
 	{% if 'error' %}
 		<h1>{{ error }}</h1>
 	{% endif %}
+
+	<script>
+	  document.addEventListener('DOMContentLoaded', function() {
+	    var myModalEl = document.getElementById('RegModal');
+	    var modal = new bootstrap.Modal(myModalEl, {
+	      keyboard: false
+	    });
+	    modal.show();
+	  });
+	</script>
+	
 {% endblock %}
 {% block customers_rewiews %}
 {% endblock %}

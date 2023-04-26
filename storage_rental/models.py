@@ -200,8 +200,8 @@ class Order(models.Model):
         related_name='orders',
         verbose_name='Ячейки заказа'
     )
-    date_from = models.DateField('Дата начала хранения')
-    date_to = models.DateField('Дата окончания хранения')
+    date_from = models.DateField('Дата начала хранения', auto_now_add=True)
+    date_to = models.DateField('Дата окончания хранения', auto_now_add=True)
     status = models.CharField(
         max_length=10,
         choices=ORDER_STATUSES,

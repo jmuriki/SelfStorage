@@ -24,7 +24,7 @@
 							{% else %}
 								<img src="#" class="rounded-pill mb-3" width="250" height="250" alt="">
 							{% endif %}
-							<h4>{{ customer.name|default:'Имя' }} {{ customer.surname|default:'Фамилия' }}</h4>
+							<h4>{{ customer.first_name|default:'Имя' }} {{ customer.last_name|default:'Фамилия' }}</h4>
 						</div>
 						<div class="col-12 col-sm-7 d-flex flex-column">
 							<form method="POST" action="{% url 'change_user_info' %}" enctype="multipart/form-data">
@@ -38,9 +38,9 @@
 									{% endif %}
 								disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="NAME">Имя</label>
-								<input type="text" name="NAME_EDIT" id="NAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.name|default:'' }}" disabled>
+								<input type="text" name="NAME_EDIT" id="NAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.first_name|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="SURNAME">Фамилия</label>
-								<input type="text" name="SURNAME_EDIT" id="SURNAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.surname|default:'' }}" disabled>
+								<input type="text" name="SURNAME_EDIT" id="SURNAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.last_name|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="EMAIL">E-mail</label>
 								<input type="email" name="EMAIL_EDIT" id="EMAIL" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ customer.email|default:'' }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="PHONE">Телефон</label>
@@ -81,64 +81,127 @@
 					</div>
 				</div>
 				<div class="tab-pane fade" id="Rent" role="tabpanel" aria-labelledby="Rent-tab">
-					<h1 class="fw-bold SelfStorage_green mb-5">Добрый день, {{ customer.name|default:'уважаемый арендатор' }}!</h1>
+					<h1 class="fw-bold SelfStorage_green mb-5">Добрый день, {{ customer.first_name|default:'уважаемый арендатор' }}!</h1>
 
-					{% if customer.orders %}
 
-						<h2 class="fw-bold SelfStorage_green mb-5">Неоплаченные ячейки</h2>
+					{% if overdue_orders %}
 
-						<form method="POST" action="{% url 'payment' %}">
-							{% csrf_token %}
+						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
 
-							{% for booking in customer.bookings.not_payed %}
+						<h2 class="fw-bold SelfStorage_green mb-5">Внимание! Оплата просрочена!</h2>
 
-								<div class="mb-5">
-									<h4 class="SelfStorage_green">Мой склад №{{booking.storage.number}}</h4>
-									<h4>{{booking.storage.city}}, {{booking.storage.address}}</h4>
-									<h4 class="SelfStorage_green">Мой бокс</h4>
-									<h4>№{{booking.cell.number}}</h4>
-									<h4 class="SelfStorage_green">Срок аренды</h4>
-									<h4>{{today}} - {{after_month}}</h4>
-									<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">Продлить аренду</button></div>
-									<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Открыть бокс</button></div>
-									<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
-								</div>
+						{% for order in overdue_orders %}
+
+							{% for cell in order.cells.all %}
+
+								<form method="POST" action="{% url 'payment' %}">
+									{% csrf_token %}
+										<div class="mb-5">
+											<input type="hidden" name="order_id" value="{{ order.id }}">
+											<input type="hidden" name="cell_id" value="{{ cell.id }}">
+											<input type="hidden" name="summa" value="{{ cell.price }}">
+											<input type="hidden" name="descr" value="Оплата аренды складского бокса">
+											<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
+											<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
+											<h4 class="SelfStorage_green">Мой бокс</h4>
+											<h4>№{{cell.id}}</h4>
+											<h4 class="SelfStorage_green">Срок аренды</h4>
+											<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
+											<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
+											</div>
+										</div>
+								</form>
 
 							{% endfor %}
 
-							<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
-							</div>
+						{% endfor %}
 
-						</form>
+						<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
 
 					{% endif %}
 
-					{% if not customer.bookings.all %}
+					{% if created_orders %}
+
+						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+
+						<h2 class="fw-bold SelfStorage_green mb-5">Неоплаченные ячейки</h2>
+
+						{% for order in created_orders %}
+
+							{% for cell in order.cells.all %}
+
+								<form method="POST" action="{% url 'payment' %}">
+									{% csrf_token %}
+										<div class="mb-5">
+											<input type="hidden" name="order_id" value="{{ order.id }}">
+											<input type="hidden" name="cell_id" value="{{ cell.id }}">
+											<input type="hidden" name="summa" value="{{ cell.price }}">
+											<input type="hidden" name="descr" value="Оплата аренды складского бокса">
+											<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
+											<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
+											<h4 class="SelfStorage_green">Мой бокс</h4>
+											<h4>№{{cell.id}}</h4>
+											<h4 class="SelfStorage_green">Срок аренды</h4>
+											<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
+											<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
+											</div>
+										</div>
+								</form>
+
+							{% endfor %}
+
+						{% endfor %}
+
+
+					{% endif %}
+
+					{% if payed_orders %}
+
+						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+
+						<h2 class="fw-bold SelfStorage_green mb-5">Ваши ячейки</h2>
 						
 						<ul>
-							{% for booking in customer.bookings.all %}
+							{% for order in payed_orders %}
 								<li>
-									{% if booking.alert %}
 
-										<h4 class="SelfStorage_grey my-3">Срок Вашей аренды подходит к концу :(<br>Вы можете продлить аренду или забрать вещи до {{day}} {{month}} {{year}} года включительно.
-										</h4>
+									{% for cell in order.cells.all %}
 
-									{% endif %}
+										{% if cell.alert %}
 
-									<div class="mb-5">
-										<h4 class="SelfStorage_green">Мой склад №{{booking.storage.number}}</h4>
-										<h4>{{booking.storage.city}}, {{booking.storage.address}}</h4>
-										<h4 class="SelfStorage_green">Мой бокс</h4>
-										<h4>№{{booking.cell.number}}</h4>
-										<h4 class="SelfStorage_green">Срок аренды</h4>
-										<h4>{{today}} - {{after_month}}</h4>
-										<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">Продлить аренду</button></div>
-										<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Открыть бокс</button></div>
-										<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
-									</div>
-									<h4 class="SelfStorage_grey my-5">Используйте QR-код,<br>чтобы открыть арендованную ячейку.</h4>
-									<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'qr' %}'">Показать QR-код</button>
-									</div>
+											<h4 class="SelfStorage_grey my-3">Срок Вашей аренды подходит к концу :(<br>Вы можете продлить аренду или забрать вещи до {{day}} {{month}} {{year}} года включительно.
+											</h4>
+
+										{% endif %}
+
+										<form method="POST" action="{% url 'payment' %}">
+											{% csrf_token %}
+											<div class="mb-5">
+												<input type="hidden" name="order_id" value="{{ order.id }}">
+												<input type="hidden" name="cell_id" value="{{ cell.id }}">
+												<input type="hidden" name="summa" value="{{ cell.price }}">
+												<input type="hidden" name="descr" value="Оплата аренды складского бокса">
+												<h4 class="SelfStorage_green">Мой склад №{{cell.storage.id}}</h4>
+												<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
+												<h4 class="SelfStorage_green">Мой бокс</h4>
+												<h4>№{{cell.id}}</h4>
+												<h4 class="SelfStorage_green">Срок аренды</h4>
+												<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
+												<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3" onclick="location.href='{% url 'payment' %}'">Продлить аренду</button>
+												</div>
+										</form>
+
+										<h4 class="SelfStorage_grey my-5">Используйте QR-код,<br>чтобы открыть арендованную ячейку.</h4>
+
+										<form method="POST" action="{% url 'qr' %}">
+											{% csrf_token %}
+											<input type="hidden" name="qr_cell_id" value="{{ cell.id }}">
+											<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Показать QR-код</button>
+											</div>
+										</form>
+
+									{% endfor %}
+
 								</li>
 
 							{% endfor %}
@@ -147,18 +210,22 @@
 
 						</ul>
 
-					{% else %}
+					{% endif %}
+
+					{% if not customer.orders.all %}
 
 						<div><a href="#" class="SelfStorage_orange">История аренды</a></div>
 
 						<h4 class="SelfStorage_grey my-5">У вас еще нет аренды :(<br>Но вы можете арендовать свой первый бокс  по привлекательной цене прямо сейчас.</h4>
 
-						<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'rent_box' %}'">Оплатить аренду</button>
+						<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'rent_box' %}'">Выбрать бокс</button>
 						</div>
 
-						<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
-
 					{% endif %}
+
+						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+
+						<div class="mb-5"><a href="#" class="SelfStorage_orange"><h3 class="SelfStorage_orange">Нужна помощь?</h3></a></div>
 
 				</div>
 			</div>
