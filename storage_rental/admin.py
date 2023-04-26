@@ -33,11 +33,21 @@ class StorageAdmin(admin.ModelAdmin):
         (None, {
                     'fields': (('name', 'description', ),
                                ('city', 'address', ),
-                               ('temperature', 'height', )
+                               ('temperature', 'height', ),
+                               ('image', 'get_image_preview', )
                                )
                 }
          ),
     )
+    readonly_fields = [
+        'get_image_preview',
+    ]
+
+    def get_image_preview(self, obj):
+        if not obj.image:
+            return 'Выберите картинку'
+        return format_html('<img src="{url}" style="max-height: 200px;"/>', url=obj.image.url)
+    get_image_preview.short_description = 'Предпросмотр'
 
 
 class CellAdmin(admin.ModelAdmin):
@@ -48,7 +58,8 @@ class CellAdmin(admin.ModelAdmin):
                                ('cell_number', 'level', ),
                                ('height', 'width', 'length', ),
                                ('square', 'capacity', ),
-                               ('price', ))
+                               ('price', ),
+                               )
                 }
          ),
     )

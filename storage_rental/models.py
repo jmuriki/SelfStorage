@@ -73,6 +73,11 @@ class Storage(models.Model):
         null=False,
         verbose_name='Высота потолка, м.'
     )
+    image = models.ImageField(
+        upload_to='',
+        blank=True,
+        verbose_name='Картинка'
+    )
 
     def __str__(self):
         return f'Склад "{self.name}", {self.city}, {self.address}, {self.description[:20]}'
