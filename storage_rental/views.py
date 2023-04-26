@@ -50,15 +50,15 @@ def rent_box(request, context={}):
     cell_sizes = ["all", "to3", "to10", "from10"]
     storages = Storage.objects.prefetch_related('cells')
     all_free_cells = Cell.objects.filter(occupied=False)
-    # to3_free_cells = Cell.objects.filter(occupied=False).filter(square__lt=3)
-    # to10_free_cells = Cell.objects.filter(occupied=False).filter(square__lt=10)
-    # from10_free_cells = Cell.objects.filter(occupied=False).filter(square__gt=10)
+    to3_free_cells = Cell.objects.filter(occupied=False).with_square().filter(sq__lte=3)
+    to10_free_cells = Cell.objects.filter(occupied=False).with_square().filter(sq__lte=10)
+    from10_free_cells = Cell.objects.filter(occupied=False).with_square().filter(sq__gt=10)
     context['cell_sizes'] = cell_sizes
     context['storages'] = storages
     context['all_free_cells'] = all_free_cells
-    # context['to3'] = to3_free_cells
-    # context['to10'] = to10_free_cells
-    # context['from10'] = from10_free_cells
+    context['to3'] = to3_free_cells
+    context['to10'] = to10_free_cells
+    context['from10'] = from10_free_cells
     return render(request, 'rent_box.html', context)
 
 

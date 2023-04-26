@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission, Group
@@ -88,6 +89,14 @@ class Storage(models.Model):
         verbose_name_plural = 'Склады'
 
 
+class CellManager(models.Manager):
+    def with_square(self):
+        return self.annotate(sq=F('width') * F('length'))
+    
+    def with_volume(self):
+        return self.annotate(vol=F('width') * F('length') * F('height'))
+
+
 class Cell(models.Model):
     storage = models.ForeignKey(
         Storage,
@@ -125,6 +134,8 @@ class Cell(models.Model):
         null=False,
         verbose_name='Стоимость хранения в ячейке'
     )
+
+    objects = CellManager()
 
     def __str__(self):
         return f'{self.storage.name}, {self.level} эт. №{self.cell_number}'
