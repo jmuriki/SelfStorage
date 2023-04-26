@@ -47,18 +47,31 @@ def calculator(request, context=None):
 
 @if_authenticated
 def rent_box(request, context={}):
-    cell_sizes = ["all", "to3", "to10", "from10"]
-    storages = Storage.objects.prefetch_related('cells')
-    all_free_cells = Cell.objects.filter(occupied=False)
+    all_free_cells = Cell.objects.with_square().filter(occupied=False)
     to3_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__lte=3)
     to10_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__lte=10)
     from10_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__gt=10)
-    context['cell_sizes'] = cell_sizes
+    cells_payload = [
+        { 
+            "cell_size": "all",
+            "cells": all_free_cells,
+        },
+        {
+            "cell_size": "to3",
+            "cells": to3_free_cells,
+        },
+        {
+            "cell_size": "to10",
+            "cells": to10_free_cells,
+        },
+        {
+            "cell_size": "from10",
+            "cells": from10_free_cells,
+        },
+    ]
+    storages = Storage.objects.with_all_cells_filters().prefetch_related('cells')
+    context['cells_payload'] = cells_payload
     context['storages'] = storages
-    context['all_free_cells'] = all_free_cells
-    context['to3'] = to3_free_cells
-    context['to10'] = to10_free_cells
-    context['from10'] = from10_free_cells
     return render(request, 'rent_box.html', context)
 
 

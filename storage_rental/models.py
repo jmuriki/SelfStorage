@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Count, Q, Min
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission, Group
@@ -47,6 +47,24 @@ class Customer(models.Model):
         verbose_name_plural = 'Арендаторы'
 
 
+class StorageManager(models.Manager):
+    def with_cells_count(self):
+        return self.annotate(cells_count=Count('cells'))
+    
+    def with_free_cells_count(self):
+        return self.annotate(free_cells_count=Count('cells', filter=Q(cells__occupied=False)))
+
+    def with_min_price(self):
+        return self.annotate(min_price=Min('cells__price'))
+
+    def with_all_cells_filters(self):
+        return self.annotate(
+            cells_count=Count('cells'),
+            free_cells_count=Count('cells', filter=Q(cells__occupied=False)),
+            min_price=Min('cells__price'),
+        )
+
+
 class Storage(models.Model):
     name = models.CharField(
         max_length=255,
@@ -80,6 +98,8 @@ class Storage(models.Model):
         blank=True,
         verbose_name='Картинка'
     )
+
+    objects = StorageManager()
 
     def __str__(self):
         return f'Склад "{self.name}", {self.city}, {self.address}, {self.description[:20]}'

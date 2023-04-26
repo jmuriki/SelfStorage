@@ -256,11 +256,11 @@
 						<h6 class="text-center">{{ storage.address }}</h6>
 					</div>
 					<div class="col-12 col-md-4 col-lg-3 d-flex flex-column justify-content-center">
-						<h4 class="text-center">{{ storage.count_free_cells }}  из {{ storage.count_cells }}</h4>
+						<h4 class="text-center">{{ storage.free_cells_count }}  из {{ storage.cells_count }}</h4>
 						<h6 class="text-center">Боксов свободно</h6>
 					</div>
 					<div class="col-12 col-md-4 col-lg-3 d-flex flex-column justify-content-center">
-						<h4 class="text-center SelfStorage_green">от {{ storage.cells.first.price }} ₽</h4>
+						<h4 class="text-center SelfStorage_green">от {{ storage.min_price }} ₽</h4>
 						<h6 class="text-center">Рядом с метро</h6>
 					</div>
 				</a>
@@ -391,13 +391,13 @@
 								<div class="col-6 d-flex flex-column align-items-center align-items-lg-start">
 									<span class="fs_30 fw-bold SelfStorage_orange">{{storage.temperature}} °С</span>
 									<span class="SelfStorage_grey mb-3">Температура на складе</span>
-									<span class="fs_30 fw-bold SelfStorage_orange">{{storage.count_free_cells}}  из {{storage.count_cells}}</span>
+									<span class="fs_30 fw-bold SelfStorage_orange">{{ storage.free_cells_count }}  из {{ storage.cells_count }}</span>
 									<span class="SelfStorage_grey mb-3">Боксов свободно</span>
 								</div>
 								<div class="col-6 d-flex flex-column align-items-center align-items-lg-start">
 									<span class="fs_30 fw-bold SelfStorage_orange">до {{storage.height}} м</span>
 									<span class="SelfStorage_grey mb-3">Высота потолка</span>
-									<span class="fs_30 fw-bold SelfStorage_orange">от {{storage.cells.first.price}} ₽</span>
+									<span class="fs_30 fw-bold SelfStorage_orange">от {{storage.min_price}} ₽</span>
 									<span class="SelfStorage_grey mb-3">Оплата за месяц</span>
 								</div>
 								<div class="d-flex flex-column align-items-center align-items-lg-start">
@@ -453,47 +453,60 @@
 
 
 
-			{% for cell_size in cell_sizes %}
+			{% for payload in cells_payload %}
 
 
 
-				<div class="tab-pane fade 
+				<div class="tab-pane fade
+
+
+
 					{% if forloop.counter == 1 %}
+
+
+
 						show active
+
+
+
 					{% endif %}
-				" id="pills-{{ cell_size }}" role="tabpanel" aria-labelledby="pills-home-tab">
 
 
 
-						{% for cell in all_free_cells %}
+				" id="pills-{{ payload.cell_size }}" role="tabpanel" aria-labelledby="pills-home-tab">
 
 
 
-							{% if forloop.counter == 1 %}
-
-
-								<form method="post" action="{% url 'make_order' %}">
-									{% csrf_token %}
-									<input type="hidden" name="cell_id" value="{{ cell.id }}">
-									<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
-										<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
-										</div>
-										<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="fs_24">{{ cell.space }} м²</span>
-										</div>
-										<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
-										</div>
-										<div class="col-12 col-lg-3">
-											<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
-										</div>
-									</a>
-								</form>
+					{% for cell in payload.cells %}
 
 
 
-							{% endif %}
+						{% if forloop.counter == 1 %}
+
+
+
+							<form method="post" action="{% url 'make_order' %}">
+								{% csrf_token %}
+								<input type="hidden" name="cell_id" value="{{ cell.id }}">
+								<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
+									<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
+									</div>
+									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="fs_24">{{ cell.sq }} м²</span>
+									</div>
+									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
+									</div>
+									<div class="col-12 col-lg-3">
+										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
+									</div>
+								</a>
+							</form>
+
+
+
+						{% endif %}
 
 
 
@@ -501,38 +514,32 @@
 
 
 
-					<div class="collapse" id="collapse-{{ cell_size }}">
+					<div class="collapse" id="collapse-{{ payload.cell_size }}">
 
 
 
+						{% for cell in payload.cells|slice:"1:" %}
 
 
 
-							{% for cell in all_free_cells|slice:"1:" %}
-
-
-
-								<form method="post" action="{% url 'make_order' %}">
-									{% csrf_token %}
-									<input type="hidden" name="cell_id" value="{{ cell.id }}">
-									<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
-										<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
-										</div>
-										<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="fs_24">{{ cell.space }} м²</span>
-										</div>
-										<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-											<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
-										</div>
-										<div class="col-12 col-lg-3">
-											<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
-										</div>
-									</a>
-								</form>
-
-
-
+							<form method="post" action="{% url 'make_order' %}">
+								{% csrf_token %}
+								<input type="hidden" name="cell_id" value="{{ cell.id }}">
+								<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
+									<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
+									</div>
+									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="fs_24">{{ cell.sq }} м²</span>
+									</div>
+									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
+										<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
+									</div>
+									<div class="col-12 col-lg-3">
+										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
+									</div>
+								</a>
+							</form>
 
 
 
@@ -542,9 +549,9 @@
 
 					</div>
 					<div class="d-flex justify-content-center mt-5">
-						<button class="btn w-auto py-3 px-5 SelfStorage__bg_orange SelfStorage__btn2_orange text-white text-center fs_24 border-8" id="btn-collapse-{{ cell_size }}" data-bs-toggle="collapse" data-bs-target="#collapse-{{ cell_size }}" aria-expanded="false" aria-controls="collapse-{{ cell_size }}">Другие боксы</button>
+						<button class="btn w-auto py-3 px-5 SelfStorage__bg_orange SelfStorage__btn2_orange text-white text-center fs_24 border-8" id="btn-collapse-{{ payload.cell_size }}" data-bs-toggle="collapse" data-bs-target="#collapse-{{ payload.cell_size }}" aria-expanded="false" aria-controls="collapse-{{ payload.cell_size }}">Другие боксы</button>
 						<script>
-							document.getElementById('btn-collapse-{{ cell_size }}').addEventListener('click', () => document.getElementById('btn-collapse-{{ cell_size }}').classList.add('d-none'))
+							document.getElementById('btn-collapse-{{ payload.cell_size }}').addEventListener('click', () => document.getElementById('btn-collapse-{{ payload.cell_size }}').classList.add('d-none'))
 						</script>
 					</div>
 				</div>
@@ -552,7 +559,6 @@
 
 
 			{% endfor %}
-
 
 
 
