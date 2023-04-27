@@ -363,7 +363,7 @@
 									<span class="SelfStorage_grey mb-3">Боксов свободно</span>
 								</div>
 								<div class="col-6 d-flex flex-column align-items-center align-items-lg-start">
-									<span class="fs_30 fw-bold SelfStorage_orange">до {{storage.height}} м</span>
+									<span class="fs_30 fw-bold SelfStorage_orange">до {{storage.height_round}} м</span>
 									<span class="SelfStorage_grey mb-3">Высота потолка</span>
 									<span class="fs_30 fw-bold SelfStorage_orange">от {{storage.min_price}} ₽</span>
 									<span class="SelfStorage_grey mb-3">Оплата за месяц</span>
@@ -439,13 +439,13 @@
 										<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
 									</div>
 									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-										<span class="fs_24">{{ cell.sq }} м²</span>
+										<span class="fs_24">{{ cell.square }} м²</span>
 									</div>
 									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-										<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
+										<span class="fs_24">{{ cell.length_round }} х {{ cell.width_round }} х {{ cell.height_round }} м</span>
 									</div>
 									<div class="col-12 col-lg-3">
-										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
+										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price_round }} ₽</button>
 									</div>
 								</a>
 							</form>
@@ -466,13 +466,13 @@
 										<span class="SelfStorage_green fs_24 me-2">{{ cell.level }} эт.</span><span class="fs_24">№{{ cell.cell_number }}</span>
 									</div>
 									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-										<span class="fs_24">{{ cell.sq }} м²</span>
+										<span class="fs_24">{{ cell.square }} м²</span>
 									</div>
 									<div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
-										<span class="fs_24">{{ cell.length }} х {{ cell.width }} х {{ cell.height }} м²</span>
+										<span class="fs_24">{{ cell.length_round }} х {{ cell.width_round }} х {{ cell.height_round }} м</span>
 									</div>
 									<div class="col-12 col-lg-3">
-										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price }} ₽</button>
+										<button class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ cell.price_round }} ₽</button>
 									</div>
 								</a>
 							</form>

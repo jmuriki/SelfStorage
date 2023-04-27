@@ -2,8 +2,10 @@ from django.db import models
 from django.db.models import F, Count, Q, Min
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Permission, Group
-import datetime
+
+
+def smart_round(value):
+    return int(value) if value == float(int(value)) else round(value, 2)
 
 
 class Customer(models.Model):
@@ -104,6 +106,11 @@ class Storage(models.Model):
     def __str__(self):
         return f'Склад "{self.name}", {self.city}, {self.address}, {self.description[:20]}'
 
+    @property
+    def height_round(self):
+        return smart_round(self.height)
+    height_round.fget.short_description = 'Высота потолка склада, м.'
+
     class Meta:
         verbose_name = 'Склад'
         verbose_name_plural = 'Склады'
@@ -164,7 +171,7 @@ class Cell(models.Model):
     def square(self):
         width = 0 if self.width is None else self.width
         length = 0 if self.length is None else self.length
-        return width * length
+        return smart_round(width * length)
     square.fget.short_description = 'Площадь ячейки, м.кв.'
 
     @property
@@ -172,8 +179,24 @@ class Cell(models.Model):
         width = 0 if self.width is None else self.width
         length = 0 if self.length is None else self.length
         height = 0 if self.height is None else self.height
-        return width * length * height
+        return smart_round(width * length * height)
     capacity.fget.short_description = 'Объём ячейки, м.куб.'
+
+    @property
+    def width_round(self):
+        return smart_round(self.width)
+
+    @property
+    def length_round(self):
+        return smart_round(self.length)
+
+    @property
+    def height_round(self):
+        return smart_round(self.height)
+
+    @property
+    def price_round(self):
+        return smart_round(self.price)
 
     class Meta:
         verbose_name = 'Ячейка'
@@ -215,14 +238,3 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
-
-
-# class Alert(models.Model):
-#     user = models.ManyToManyField('Customer')
-#     alert_name = models.CharField(max_length=250)
-#     alert_text = models.TextField(blank=True)
-#     date = models.DateTimeField(auto_now_add=True)
-#     status = models.CharField(max_length=250, default='отправлено')
-
-#     class Meta:
-#         verbose_name_plural = "Оповщения"
