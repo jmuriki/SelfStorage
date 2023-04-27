@@ -43,7 +43,7 @@ class Customer(models.Model):
     )
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}, {self.email}'
+        return self.email if not self.first_name or not self.last_name else f'{self.first_name} {self.last_name}'
 
     class Meta:
         verbose_name = 'Арендатор'
