@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ```
 
 - Установите [RollBar](https://docs.rollbar.com/docs/setup) и получите токен
-- Зарегистрируйтесь в ЮКасса
+- [Зарегистрируйтесь в ЮКасса](https://yookassa.ru/yooid/signup/step/phone)
 
   Создайте тестовый или реальный магазин и получите его ID и ключ
 
