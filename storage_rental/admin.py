@@ -55,7 +55,7 @@ class CellAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
                     'fields': (('storage', ),
-                               ('cell_number', 'level', ),
+                               ('occupied', 'cell_number', 'level', ),
                                ('height', 'width', 'length', ),
                                ('square', 'capacity', ),
                                ('price', ),

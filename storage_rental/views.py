@@ -259,10 +259,8 @@ def payment(request, context={}):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         cell_id = request.POST.get('cell_id')
-        summa = request.POST.get('summa')
-        summa = 153.42
+        summa = float(request.POST.get('summa').replace(",", "."))
         descr = request.POST.get('descr')
-        descr = "Описание предмета платежа"
         cell = Cell.objects.get(id=cell_id)
         if not cell.occupied:
             save_to_cookies(request, 'payed_cell_id', cell_id)
@@ -322,10 +320,15 @@ def make_pay(pay_account, pay_secretkey, summa, descr, ret_url):
 def qr(request):
     if request.method == 'POST':
         qr_cell_id = request.POST.get('qr_cell_id')
-        qr_data = f"Это qr-код для открытия ячейки № {qr_cell_id}"
+        cell = Cell.objects.get(id=qr_cell_id)
+        order = cell.orders.filter(status='payed').first()
+        qr_data = f"Заказ № {order.id}. Ячейка № {cell.cell_number}. Период аренды с {order.date_from} по {order.date_to}."
         name, _ = str(request.user).split("@")
         qr_name = create_qr_code(name, qr_data)
-        context = {'qrcode': qr_name}
+        context = {
+            'qrcode': qr_name,
+            'cell_number': cell.cell_number,
+        }
     else:
         context = {'error': "Что-то пошло не так..."}
     return render(request, 'qr.html', context)
@@ -348,3 +351,11 @@ def make_order(request, context=None):
             return redirect('sign_up')
         return redirect('account')
     return redirect('main_page')
+
+
+@if_authenticated
+def order_canсel(request, context={}):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        Order.objects.get(id=order_id).delete()
+    return redirect('account')
