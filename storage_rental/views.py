@@ -11,6 +11,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from storage_rental.models import Customer, Storage, Cell, Order
 from django.dispatch import receiver
+from django.core.exceptions import ObjectDoesNotExist
 
 from functools import wraps
 from yookassa import Configuration, Payment
@@ -23,7 +24,7 @@ def save_to_cookies(request, key, payload):
     request.session.modified = True
     response = HttpResponse("Your choice was saved as a cookie!")
     response.set_cookie('session_id', request.session.session_key)
-    return
+    return response
 
 
 def if_authenticated(view_func):
@@ -40,12 +41,16 @@ def if_authenticated(view_func):
 
 @if_authenticated
 def rent_box(request, context={}):
-    all_free_cells = Cell.objects.with_square().filter(occupied=False)
-    to3_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__lte=3)
-    to10_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__lte=10)
-    from10_free_cells = Cell.objects.with_square().filter(occupied=False).filter(sq__gt=10)
+    all_free_cells = Cell.objects.with_square()\
+        .filter(occupied=False)
+    to3_free_cells = Cell.objects.with_square()\
+        .filter(occupied=False).filter(sq__lte=3)
+    to10_free_cells = Cell.objects.with_square()\
+        .filter(occupied=False).filter(sq__lte=10)
+    from10_free_cells = Cell.objects.with_square()\
+        .filter(occupied=False).filter(sq__gt=10)
     cells_payload = [
-        { 
+        {
             "cell_size": "all",
             "cells": all_free_cells,
         },
@@ -62,7 +67,8 @@ def rent_box(request, context={}):
             "cells": from10_free_cells,
         },
     ]
-    storages = Storage.objects.with_all_cells_filters().prefetch_related('cells')
+    storages = Storage.objects.with_all_cells_filters()\
+        .prefetch_related('cells')
     context['cells_payload'] = cells_payload
     context['storages'] = storages
     return render(request, 'rent_box.html', context)
@@ -121,20 +127,45 @@ def notifications(request, context=None):
 
 
 @if_authenticated
-def account(request, context=None):
+def account(request, context={}):
     user_id = request.user.id
-    customer = Customer.objects.get(id=user_id)
     cell_id = request.session.get('cell_id', None)
-    if cell_id:
+    try:
+        customer = Customer.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        customer = None
+    if customer:
+        try:
+            created_orders = Order.objects.filter(
+                status='created',
+                customer=customer,
+            ).prefetch_related('cells')
+            cells_bunches = [order.cells.all() for order in created_orders]
+            chousen_cells_ids = [
+                cell.id for cells_bunch in cells_bunches for cell in cells_bunch
+            ]
+            is_chousen = int(cell_id) in chousen_cells_ids
+        except AttributeError:
+            is_chousen = False
+        except TypeError:
+            is_chousen = False
+    if cell_id and customer and not is_chousen:
         cell = Cell.objects.get(id=cell_id)
-        new_order = Order.objects.create(customer=customer, status='created')
-        new_order.cells.add(cell)
-        new_order.save()
         save_to_cookies(request, 'cell_id', None)
-    if context:
-        context['customer'] = Customer.objects.prefetch_related('orders').get(id=user_id)
-        context['created_orders'] = Order.objects.filter(status='created', customer=customer)
-        context['payed_orders'] = Order.objects.filter(status='payed', customer=customer)
+        if not cell.occupied:
+            new_order = Order.objects.create(customer=customer, status='created')
+            new_order.cells.add(cell)
+            new_order.save()
+        else:
+            context['error'] = "Извините, данную ячейку только что арендовали."
+            return render(request, 'notifications.html', context)
+    if context and customer:
+        context['customer'] = Customer.objects\
+            .prefetch_related('orders').get(id=user_id)
+        context['created_orders'] = Order.objects\
+            .filter(status='created', customer=customer)
+        context['payed_orders'] = Order.objects\
+            .filter(status='payed', customer=customer)
         return render(request, 'account.html', context)
     return redirect('main_page')
 
@@ -147,15 +178,20 @@ def sign_up(request, context={}):
 
         if User.objects.filter(username=username).exists():
             context['error'] = """Такой пользователь уже зарегистрирован.
-            Если вы не помните свой пароль, сделайте запрос на восстановление."""
+            Если вы не помните свой пароль,
+            сделайте, пожалуйста, запрос на восстановление."""
             return render(request, 'sign_up.html', context)
         elif password == confirm_password:
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+            )
             login(request, user)
             return redirect('account')
         else:
             context['sign_up'] = False
-            context['error'] = 'Пароли не совпадают. Пожалуйста, попробуйте снова.'
+            context['error'] = """Пароли не совпадают.
+            Пожалуйста, попробуйте снова."""
             return render(request, 'sign_up.html', context)
     else:
         need_sign_up = request.session.get('need_sign_up')
@@ -219,21 +255,30 @@ def change_user_info(request):
 
 
 @login_required
-def payment(request):
+def payment(request, context={}):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         cell_id = request.POST.get('cell_id')
         summa = request.POST.get('summa')
+        summa = 153.42
         descr = request.POST.get('descr')
-        save_to_cookies(request, 'payed_cell_id', cell_id)
-        save_to_cookies(request, 'payed_order_id', order_id)
-    summa = 153.42
-    descr = "Описание предмета платежа"
-    absolute_url = request.build_absolute_uri()
-    parsed_url = urlparse(absolute_url)
-    ret_url = f'{parsed_url.scheme}://{parsed_url.netloc}/pay_result?payment_success=1'
-    yookassa = make_pay(PAY_ACC, PAY_KEY, summa, descr, ret_url)
-    return redirect(yookassa.confirmation.confirmation_url)
+        descr = "Описание предмета платежа"
+        cell = Cell.objects.get(id=cell_id)
+        if not cell.occupied:
+            save_to_cookies(request, 'payed_cell_id', cell_id)
+            save_to_cookies(request, 'payed_order_id', order_id)
+            absolute_url = request.build_absolute_uri()
+            parsed_url = urlparse(absolute_url)
+            ret_url = f'{parsed_url.scheme}://{parsed_url.netloc}/pay_result?payment_success=1'
+            yookassa = make_pay(PAY_ACC, PAY_KEY, summa, descr, ret_url)
+            return redirect(yookassa.confirmation.confirmation_url)
+        else:
+            order = Order.objects.get(id=order_id)
+            order.cells.remove(cell)
+            context['error'] = "Извините, данную ячейку уже арендовали."
+            return render(request, 'notifications.html', context)
+    return redirect('account')
+
 
 @if_authenticated
 def pay_result(request, context={}):
@@ -241,6 +286,10 @@ def pay_result(request, context={}):
     message = "Оплата не прошла."
     if payment_res:
         message = "Оплата прошла успешно."
+        payed_cell_id = request.session.get('payed_cell_id')
+        payed_cell = Cell.objects.get(id=payed_cell_id)
+        payed_cell.occupied = True
+        payed_cell.save()
         payed_order_id = request.session.get('payed_order_id')
         payed_order = Order.objects.get(id=payed_order_id)
         payed_order.status = 'payed'
@@ -248,7 +297,6 @@ def pay_result(request, context={}):
         save_to_cookies(request, 'payed_cell_id', None)
         save_to_cookies(request, 'payed_order_id', None)
     context['payment_res'] = message
-
     return render(request, 'pay_result.html', context)
 
 
@@ -278,6 +326,8 @@ def qr(request):
         name, _ = str(request.user).split("@")
         qr_name = create_qr_code(name, qr_data)
         context = {'qrcode': qr_name}
+    else:
+        context = {'error': "Что-то пошло не так..."}
     return render(request, 'qr.html', context)
 
 

@@ -8,10 +8,16 @@
 {% block article %}
 {% endblock %}
 {% block content %}
-	<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
-		<img src="{% media qrcode %}" class="rounded-pill mb-3" alt="">
-		<h2>{{ qrcode }}</h2>
-	</div>
+
+	{% if qrcode %}
+		<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
+			<img src="{% media qrcode %}" class="rounded-pill mb-3" alt="">
+			<h2>{{ qrcode }}</h2>
+		</div>
+	{% elif error %}
+		<h1>{{ error }}</h1>
+	{% endif %}
+
 {% endblock %}
 {% block customers_rewiews %}
 {% endblock %}

@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% load static %}
 	{% block title %}
-	<title>Личный кабинет</title>
+		<title>Личный кабинет</title>
 	{% endblock %}
 {% block article %}
 {% endblock %}
@@ -86,7 +86,7 @@
 
 					{% if overdue_orders %}
 
-						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+						<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 
 						<h2 class="fw-bold SelfStorage_green mb-5">Внимание! Оплата просрочена!</h2>
 
@@ -96,20 +96,20 @@
 
 								<form method="POST" action="{% url 'payment' %}">
 									{% csrf_token %}
-										<div class="mb-5">
-											<input type="hidden" name="order_id" value="{{ order.id }}">
-											<input type="hidden" name="cell_id" value="{{ cell.id }}">
-											<input type="hidden" name="summa" value="{{ cell.price }}">
-											<input type="hidden" name="descr" value="Оплата аренды складского бокса">
-											<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
-											<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
-											<h4 class="SelfStorage_green">Мой бокс</h4>
-											<h4>№{{cell.id}}</h4>
-											<h4 class="SelfStorage_green">Срок аренды</h4>
-											<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
-											<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
-											</div>
+									<div class="mb-5">
+										<input type="hidden" name="order_id" value="{{ order.id }}">
+										<input type="hidden" name="cell_id" value="{{ cell.id }}">
+										<input type="hidden" name="summa" value="{{ cell.price }}">
+										<input type="hidden" name="descr" value="Оплата аренды складского бокса">
+										<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
+										<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
+										<h4 class="SelfStorage_green">Мой бокс</h4>
+										<h4>№{{cell.id}}</h4>
+										<h4 class="SelfStorage_green">Срок аренды</h4>
+										<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
+										<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
 										</div>
+									</div>
 								</form>
 
 							{% endfor %}
@@ -122,7 +122,7 @@
 
 					{% if created_orders %}
 
-						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+						<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 
 						<h2 class="fw-bold SelfStorage_green mb-5">Неоплаченные ячейки</h2>
 
@@ -132,37 +132,38 @@
 
 								<form method="POST" action="{% url 'payment' %}">
 									{% csrf_token %}
-										<div class="mb-5">
-											<input type="hidden" name="order_id" value="{{ order.id }}">
-											<input type="hidden" name="cell_id" value="{{ cell.id }}">
-											<input type="hidden" name="summa" value="{{ cell.price }}">
-											<input type="hidden" name="descr" value="Оплата аренды складского бокса">
-											<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
-											<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
-											<h4 class="SelfStorage_green">Мой бокс</h4>
-											<h4>№{{cell.id}}</h4>
-											<h4 class="SelfStorage_green">Срок аренды</h4>
-											<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
-											<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
-											</div>
+									<div class="mb-5">
+										<input type="hidden" name="order_id" value="{{ order.id }}">
+										<input type="hidden" name="cell_id" value="{{ cell.id }}">
+										<input type="hidden" name="summa" value="{{ cell.price }}">
+										<input type="hidden" name="descr" value="Оплата аренды складского бокса">
+										<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
+										<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
+										<h4 class="SelfStorage_green">Мой бокс</h4>
+										<h4>№{{cell.id}}</h4>
+										<h4 class="SelfStorage_green">Срок аренды</h4>
+										<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
+										<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить аренду</button>
 										</div>
+									</div>
 								</form>
 
 							{% endfor %}
 
 						{% endfor %}
 
-
 					{% endif %}
 
 					{% if payed_orders %}
 
-						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+						<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 
 						<h2 class="fw-bold SelfStorage_green mb-5">Ваши ячейки</h2>
 						
 						<ul>
+
 							{% for order in payed_orders %}
+
 								<li>
 
 									{% for cell in order.cells.all %}
@@ -189,6 +190,7 @@
 												<h4>{{cell.date_from}} - {{cell.date_to}}</h4>
 												<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3" onclick="location.href='{% url 'payment' %}'">Продлить аренду</button>
 												</div>
+											</div>
 										</form>
 
 										<h4 class="SelfStorage_grey my-5">Используйте QR-код,<br>чтобы открыть арендованную ячейку.</h4>
@@ -223,9 +225,10 @@
 
 					{% endif %}
 
-						<h2 class="fw-bold SelfStorage_green mb-5">________________________________________</h2>
+					<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 
-						<div class="mb-5"><a href="#" class="SelfStorage_orange"><h3 class="SelfStorage_orange">Нужна помощь?</h3></a></div>
+					<div class="mb-5"><a href="#" class="SelfStorage_orange"><h3 class="SelfStorage_orange">Нужна помощь?</h3></a>
+					</div>
 
 				</div>
 			</div>
