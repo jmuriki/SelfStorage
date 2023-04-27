@@ -325,7 +325,8 @@ def qr(request):
         qr_cell_id = request.POST.get('qr_cell_id')
         cell = Cell.objects.get(id=qr_cell_id)
         order = cell.orders.filter(status='payed').first()
-        qr_data = f"Заказ № {order.id}. Ячейка № {cell.cell_number}. Период аренды с {order.date_from} по {order.date_to}."
+        qr_data = f"""Заказ № {order.id}. Ячейка № {cell.cell_number}.
+        Период аренды с {order.date_from} по {order.date_to}."""
         name, _ = str(request.user).split("@")
         qr_name = create_qr_code(name, qr_data)
         context = {
