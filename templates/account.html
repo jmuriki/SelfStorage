@@ -106,7 +106,7 @@
 										<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
 										<h4 class="SelfStorage_green">Мой бокс</h4>
 										<h4>№{{cell.cell_number}}</h4>
-										<h4 class="SelfStorage_green">Срок истекшей аренды</h4>
+										<h4 class="SelfStorage_green">Период истекшей аренды</h4>
 										<h4>{{order.date_from}} - {{order.date_to}}</h4>
 										<h4 class="SelfStorage_green">Стоимость аренды (за 1 месяц)</h4>
 										<h4>{{ cell.price_round }} рублей</h4>
@@ -140,7 +140,7 @@
 										<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
 										<h4 class="SelfStorage_green">Мой бокс</h4>
 										<h4>№{{cell.cell_number}}</h4>
-										<h4 class="SelfStorage_green">Срок аренды</h4>
+										<h4 class="SelfStorage_green">Период аренды</h4>
 										<h4>{{order.date_from}} - {{order.date_to}}</h4>
 										<h4 class="SelfStorage_green">Стоимость аренды (за 1 месяц)</h4>
 										<h4>{{ cell.price_round }} рублей</h4>
@@ -188,7 +188,7 @@
 
 										{% if cell.alert %}
 
-											<h4 class="SelfStorage_grey my-3">Срок Вашей аренды подходит к концу :(<br>Вы можете продлить аренду или забрать вещи до {{day}} {{month}} {{year}} года включительно.
+											<h4 class="SelfStorage_grey my-3">Период Вашей аренды подходит к концу :(<br>Вы можете продлить аренду или забрать вещи до {{day}} {{month}} {{year}} года включительно.
 											</h4>
 
 										{% endif %}
@@ -198,7 +198,7 @@
 												<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
 												<h4 class="SelfStorage_green">Мой бокс</h4>
 												<h4>№{{cell.cell_number}}</h4>
-												<h4 class="SelfStorage_green">Срок аренды</h4>
+												<h4 class="SelfStorage_green">Период аренды</h4>
 												<h4>{{order.date_from}} - {{order.date_to}}</h4>
 												<h4 class="SelfStorage_green">Стоимость оплаченной аренды (за 1 месяц)</h4>
 												<h4>{{ cell.price_round }} рублей</h4>
