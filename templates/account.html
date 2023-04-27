@@ -24,7 +24,7 @@
 							{% else %}
 								<img src="#" class="rounded-pill mb-3" width="250" height="250" alt="">
 							{% endif %}
-							<h4>{{ customer.first_name|default:'Имя' }} {{ customer.last_name|default:'Фамилия' }}</h4>
+							<h4>{{ customer }}</h4>
 						</div>
 						<div class="col-12 col-sm-7 d-flex flex-column">
 							<form method="POST" action="{% url 'change_user_info' %}" enctype="multipart/form-data">
