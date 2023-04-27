@@ -343,12 +343,12 @@ def qr(request):
         order = cell.orders.filter(status='payed').first()
         qr_data = f"""Заказ № {order.id}. Ячейка № {cell.cell_number}.
         Период аренды с {order.date_from} по {order.date_to}."""
-        # name, _ = str(request.user).split("@")
         name = str(request.user).replace("@", "_")
         qr_name = create_qr_code(name, qr_data)
         context = {
             'qrcode': qr_name,
-            'qr_details': qr_data  # cell.cell_number,
+            'qr_details': qr_data,
+            'customer': order.customer
         }
     else:
         context = {'error': "Что-то пошло не так..."}
