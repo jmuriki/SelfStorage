@@ -101,11 +101,12 @@
 										<input type="hidden" name="cell_id" value="{{ cell.id }}">
 										<input type="hidden" name="summa" value="{{ cell.price }}">
 										<input type="hidden" name="descr" value="Оплата аренды складского бокса SelfStorage № {{ cell.number }}.">
+										<input type="hidden" name="overdue" value="True">
 										<h4 class="SelfStorage_green">Мой склад № {{cell.storage.id}}</h4>
 										<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
 										<h4 class="SelfStorage_green">Мой бокс</h4>
 										<h4>№{{cell.cell_number}}</h4>
-										<h4 class="SelfStorage_green">Срок аренды</h4>
+										<h4 class="SelfStorage_green">Срок истекшей аренды</h4>
 										<h4>{{order.date_from}} - {{order.date_to}}</h4>
 										<h4 class="SelfStorage_green">Стоимость аренды (за 1 месяц)</h4>
 										<h4>{{ cell.price_round }} рублей</h4>
@@ -119,7 +120,8 @@
 
 						{% endfor %}
 
-						<a href="#" class="SelfStorage_orange">Нужна помощь?</a>
+						<div><a href="#" class="SelfStorage_orange">История аренды</a></div>
+						<div><a href="#" class="SelfStorage_orange">Нужна помощь?</a></div>
 
 					{% endif %}
 
@@ -165,6 +167,9 @@
 
 						{% endfor %}
 
+						<div><a href="#" class="SelfStorage_orange">История аренды</a></div>
+						<div><a href="#" class="SelfStorage_orange">Нужна помощь?</a></div>
+
 					{% endif %}
 
 					{% if payed_orders %}
@@ -188,13 +193,7 @@
 
 										{% endif %}
 
-										<form method="POST" action="{% url 'payment' %}">
-											{% csrf_token %}
 											<div class="mb-5">
-												<input type="hidden" name="order_id" value="{{ order.id }}">
-												<input type="hidden" name="cell_id" value="{{ cell.id }}">
-												<input type="hidden" name="summa" value="{{ cell.price }}">
-												<input type="hidden" name="descr" value="Оплата аренды складского бокса">
 												<h4 class="SelfStorage_green">Мой склад №{{cell.storage.id}}</h4>
 												<h4>{{cell.storage.city}}, {{cell.storage.address}}</h4>
 												<h4 class="SelfStorage_green">Мой бокс</h4>
@@ -204,10 +203,7 @@
 												<h4 class="SelfStorage_green">Стоимость оплаченной аренды (за 1 месяц)</h4>
 												<h4>{{ cell.price_round }} рублей</h4>
 												<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
-												<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3" onclick="location.href='{% url 'payment' %}'">Продлить аренду</button>
-												</div>
 											</div>
-										</form>
 
 										<h4 class="SelfStorage_grey my-5">Используйте QR-код,<br>чтобы открыть арендованную ячейку.</h4>
 
@@ -218,6 +214,8 @@
 											</div>
 										</form>
 
+										<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
+
 									{% endfor %}
 
 								</li>
@@ -225,6 +223,7 @@
 							{% endfor %}
 
 							<div><a href="#" class="SelfStorage_orange">История аренды</a></div>
+							<div><a href="#" class="SelfStorage_orange">Нужна помощь?</a></div>
 
 						</ul>
 
@@ -240,11 +239,6 @@
 						</div>
 
 					{% endif %}
-
-					<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
-
-					<div class="mb-5"><a href="#" class="SelfStorage_orange"><h3 class="SelfStorage_orange">Нужна помощь?</h3></a>
-					</div>
 
 				</div>
 			</div>

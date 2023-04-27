@@ -131,12 +131,13 @@ def notifications(request, context=None):
     return redirect('main_page')
 
 
-def get_dates():
-    today = datetime.today().date()
-    days_in_month = calendar.monthrange(today.year, today.month)[1]
-    date_from = today
-    date_to = today + timedelta(days=days_in_month - 1)
-    return date_from, date_to
+def get_dates(date_from=None):
+    if not date_from:
+        today = datetime.today().date()
+        date_from = today
+    days_in_month = calendar.monthrange(date_from.year, date_from.month)[1]
+    after_month = date_from + timedelta(days=days_in_month - 1)
+    return date_from, after_month
 
 
 @if_authenticated
@@ -166,12 +167,12 @@ def account(request, context={}):
         cell = Cell.objects.get(id=cell_id)
         save_to_cookies(request, 'cell_id', None)
         if not cell.occupied:
-            date_from, date_to = get_dates()
+            date_from, after_month = get_dates()
             new_order = Order.objects.create(
                 customer=customer,
                 status='created',
                 date_from=date_from,
-                date_to=date_to,
+                date_to=after_month,
             )
             new_order.cells.add(cell)
             new_order.save()
@@ -179,12 +180,20 @@ def account(request, context={}):
             context['error'] = "Извините, данную ячейку только что арендовали."
             return render(request, 'notifications.html', context)
     if context and customer:
+        today, _ = get_dates() 
         context['customer'] = Customer.objects\
             .prefetch_related('orders').get(id=user_id)
         context['created_orders'] = Order.objects\
             .filter(status='created', customer=customer)
         context['payed_orders'] = Order.objects\
-            .filter(status='payed', customer=customer)
+            .filter(status='payed', date_to__gte=today, customer=customer)
+        overdue_orders = Order.objects\
+            .filter(status='payed', date_to__lt=today, customer=customer)
+        for order in overdue_orders:
+            order.status = 'overdue'
+            order.save()
+        context['overdue_orders'] = Order.objects\
+            .filter(status='overdue', customer=customer)
         return render(request, 'account.html', context)
     return redirect('main_page')
 
@@ -280,8 +289,16 @@ def payment(request, context={}):
         cell_id = request.POST.get('cell_id')
         summa = float(request.POST.get('summa').replace(",", "."))
         descr = request.POST.get('descr')
+        overdue = request.POST.get('overdue')
+        if overdue:
+            order = Order.objects.get(id=order_id)
+            start_date = order.date_from
+        else:
+            start_date = None
+        date_from, after_month = get_dates(start_date)
+        descr = f"{descr} {date_from} - {after_month}."
         cell = Cell.objects.get(id=cell_id)
-        if not cell.occupied:
+        if not cell.occupied or overdue:
             save_to_cookies(request, 'payed_cell_id', cell_id)
             save_to_cookies(request, 'payed_order_id', order_id)
             absolute_url = request.build_absolute_uri()
