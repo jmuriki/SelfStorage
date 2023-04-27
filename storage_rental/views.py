@@ -1,5 +1,6 @@
 import os
 import qrcode
+import calendar
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,6 +15,7 @@ from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
 
 from functools import wraps
+from datetime import datetime, timedelta
 from yookassa import Configuration, Payment
 from selfstorage.settings import PAY_ACC, PAY_KEY
 from urllib.parse import urlparse
@@ -129,6 +131,14 @@ def notifications(request, context=None):
     return redirect('main_page')
 
 
+def get_dates():
+    today = datetime.today().date()
+    days_in_month = calendar.monthrange(today.year, today.month)[1]
+    date_from = today
+    date_to = today + timedelta(days=days_in_month - 1)
+    return date_from, date_to
+
+
 @if_authenticated
 def account(request, context={}):
     user_id = request.user.id
@@ -156,7 +166,13 @@ def account(request, context={}):
         cell = Cell.objects.get(id=cell_id)
         save_to_cookies(request, 'cell_id', None)
         if not cell.occupied:
-            new_order = Order.objects.create(customer=customer, status='created')
+            date_from, date_to = get_dates()
+            new_order = Order.objects.create(
+                customer=customer,
+                status='created',
+                date_from=date_from,
+                date_to=date_to,
+            )
             new_order.cells.add(cell)
             new_order.save()
         else:
