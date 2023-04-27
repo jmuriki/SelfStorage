@@ -12,7 +12,7 @@
 	{% if qrcode %}
 		<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
 			<img src="{% media qrcode %}" class="mb-3" width="350" height="350" alt="">
-			<h2>{{ cell_number }}</h2>
+			<h2>{{ qr_details }}</h2>
 		</div>
 	{% elif error %}
 		<h1>{{ error }}</h1>
