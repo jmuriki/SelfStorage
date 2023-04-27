@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import F, Count, Q, Min
+from django.db.models import F, Count, Q, Min, IntegerField
+from django.db.models.functions import Cast
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 
@@ -63,7 +64,7 @@ class StorageManager(models.Manager):
         return self.annotate(
             cells_count=Count('cells'),
             free_cells_count=Count('cells', filter=Q(cells__occupied=False)),
-            min_price=Min('cells__price'),
+            min_price=Cast(Min('cells__price'), output_field=IntegerField()),
         )
 
 

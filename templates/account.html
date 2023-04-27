@@ -108,7 +108,7 @@
 										<h4 class="SelfStorage_green">Срок аренды</h4>
 										<h4>{{order.date_from}} - {{order.date_to}}</h4>
 										<h4 class="SelfStorage_green">Стоимость аренды (за 1 месяц)</h4>
-										<h4>{{ cell.price }} рублей</h4>
+										<h4>{{ cell.price_round }} рублей</h4>
 										<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 										<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3" onclick="location.href='{% url 'payment' %}'">Оплатить продление аренды</button>
 										</div>
@@ -141,7 +141,7 @@
 										<h4 class="SelfStorage_green">Срок аренды</h4>
 										<h4>{{order.date_from}} - {{order.date_to}}</h4>
 										<h4 class="SelfStorage_green">Стоимость аренды (за 1 месяц)</h4>
-										<h4>{{ cell.price }} рублей</h4>
+										<h4>{{ cell.price_round }} рублей</h4>
 										<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 										<form method="POST" action="{% url 'payment' %}">
 											{% csrf_token %}
@@ -202,7 +202,7 @@
 												<h4 class="SelfStorage_green">Срок аренды</h4>
 												<h4>{{order.date_from}} - {{order.date_to}}</h4>
 												<h4 class="SelfStorage_green">Стоимость оплаченной аренды (за 1 месяц)</h4>
-												<h4>{{ cell.price }} рублей</h4>
+												<h4>{{ cell.price_round }} рублей</h4>
 												<h2 class="fw-bold SelfStorage_green mb-5">______________________________________</h2>
 												<div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3" onclick="location.href='{% url 'payment' %}'">Продлить аренду</button>
 												</div>
