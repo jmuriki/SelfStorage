@@ -31,8 +31,11 @@ def if_authenticated(view_func):
     @wraps(view_func)
     def wrapper(request, context={}, *args, **kwargs):
         if request.user.is_authenticated:
-            customer = Customer.objects.get(user=request.user)
-            context['customer'] = customer
+            try:
+                customer = Customer.objects.get(user=request.user)
+                context['customer'] = customer
+            except ObjectDoesNotExist:
+                pass
             return view_func(request, context, *args, **kwargs)
         else:
             return view_func(request, context, *args, **kwargs)
