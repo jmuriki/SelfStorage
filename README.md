@@ -6,7 +6,7 @@
 ## Как запустить проект в режиме разработчика
 - Скачайте код
 ```bash
-git clone https://github.com/jmuriki/selfstorage.git
+git clone https://github.com/jmuriki/SelfStorage.git
 cd self_storage
 ```
 - Создайте виртуальное окружение (необязательно)
